@@ -17,8 +17,12 @@ const tripControlsHeadings = document.querySelectorAll(`.trip-main__trip-control
 renderHtmlInContainer(tripControlsHeadings[0], `afterend`, returnTripControlsHtml());
 renderHtmlInContainer(tripControlsHeadings[1], `afterend`, returnTripFiltersHtml());
 
-const tripEventsSection = document.querySelector(`section.trip-events`);
-renderHtmlInContainer(tripEventsSection, `beforeend`, returnTripSortHtml() + returnEventListHtml());
-
-const tripEventsList = tripEventsSection.querySelector(` ul.trip-events__list`);
+// Подготовка временного контейнера с карточками
+const eventListTempContainer = document.createElement(`div`);
+renderHtmlInContainer(eventListTempContainer, `beforeend`, returnEventListHtml());
+const tripEventsList = eventListTempContainer.querySelector(` ul.trip-events__list`);
 renderHtmlInContainer(tripEventsList, `beforeend`, returnEventEditHtml() + returnEventHtml().repeat(3));
+
+// Отрисовка строки сортировки и списка карточек
+const tripEventsSection = document.querySelector(`section.trip-events`);
+renderHtmlInContainer(tripEventsSection, `beforeend`, returnTripSortHtml() + eventListTempContainer.innerHTML);

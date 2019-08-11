@@ -6,6 +6,8 @@ import {returnEventListHtml} from "./components/event-list";
 import {returnEventHtml} from "./components/event";
 import {returnEventEditHtml} from "./components/event-edit";
 
+const NUMBER_OF_EVENTS_TO_RENDER = 3;
+
 const renderHtmlInContainer = (container, place, html) => {
   container.insertAdjacentHTML(place, html);
 };
@@ -21,7 +23,7 @@ renderHtmlInContainer(tripControlsHeadings[1], `afterend`, returnTripFiltersHtml
 const eventListTempContainer = document.createElement(`div`);
 renderHtmlInContainer(eventListTempContainer, `beforeend`, returnEventListHtml());
 const tripEventsList = eventListTempContainer.querySelector(` ul.trip-events__list`);
-renderHtmlInContainer(tripEventsList, `beforeend`, returnEventEditHtml() + returnEventHtml().repeat(3));
+renderHtmlInContainer(tripEventsList, `beforeend`, returnEventEditHtml() + returnEventHtml().repeat(NUMBER_OF_EVENTS_TO_RENDER));
 
 // Отрисовка строки сортировки и списка карточек
 const tripEventsSection = document.querySelector(`section.trip-events`);

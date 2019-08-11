@@ -1,4 +1,4 @@
-export const returnEventListHtml = () => `
+export const returnEventListHtml = (eventCardsHtml) => `
   <ul class="trip-days">
     <li class="trip-days__item  day">
       <div class="day__info">
@@ -7,6 +7,7 @@ export const returnEventListHtml = () => `
       </div>
 
       <ul class="trip-events__list">
+        ${eventCardsHtml}
       </ul>
     </li>
   </ul>

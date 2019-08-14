@@ -4,7 +4,7 @@ const MILLISECONDS_IN_MINUTE = 1000 * 60;
 const formatDateToISO = (timeStamp) => {
   return new Date(timeStamp).toISOString();
 };
-const formatDateToSpecial = (timeStamp) => {
+const formatDateToEventCard = (timeStamp) => {
   return new Date(timeStamp).toLocaleString(`en-US`, {hour: `2-digit`, minute: `2-digit`, hour12: false});
 };
 
@@ -18,9 +18,9 @@ export const returnEventHtml = ({type, city, timeStart, duration, price, offers}
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${formatDateToISO(timeStart)}">${formatDateToSpecial(timeStart)}</time>
+          <time class="event__start-time" datetime="${formatDateToISO(timeStart)}">${formatDateToEventCard(timeStart)}</time>
           &mdash;
-          <time class="event__end-time" datetime="${formatDateToISO(timeStart + duration)}">${formatDateToSpecial(timeStart + duration)}</time>
+          <time class="event__end-time" datetime="${formatDateToISO(timeStart + duration)}">${formatDateToEventCard(timeStart + duration)}</time>
         </p>
         <p class="event__duration">${Math.trunc(duration / (MILLISECONDS_IN_HOUR))}H ${Math.trunc((duration / (MILLISECONDS_IN_MINUTE)) % 60)}M</p>
       </div>

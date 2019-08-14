@@ -1,6 +1,6 @@
 import {CITIES} from "../data";
 
-const formatDateToSpecial = (timeStamp) => {
+const formatDateToEventEditCard = (timeStamp) => {
   return new Date(timeStamp).toLocaleString(`en-US`, {hour12: false, day: `2-digit`, month: `2-digit`, year: `2-digit`, hour: `2-digit`, minute: `2-digit`});
 };
 
@@ -91,12 +91,12 @@ export const returnEventEditHtml = ({type, city, timeStart, duration, price, off
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDateToSpecial(timeStart)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDateToEventEditCard(timeStart)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDateToSpecial(timeStart + duration)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDateToEventEditCard(timeStart + duration)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

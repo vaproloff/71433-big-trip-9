@@ -3,8 +3,6 @@ import {returnTripControlsHtml} from "./components/menu";
 import {returnTripFiltersHtml} from "./components/filter";
 import {returnTripSortHtml} from "./components/sort";
 import {returnEventListHtml} from "./components/event-list";
-import {returnEventHtml} from "./components/event";
-import {returnEventEditHtml} from "./components/event-edit";
 import {events} from "./data";
 import {menus} from "./data";
 import {filters} from "./data";
@@ -30,12 +28,11 @@ renderHtmlInContainer(tripControlsHeadings[1], `afterend`, returnTripFiltersHtml
 
 // Подготовка временного контейнера с карточками
 const eventListTempContainer = document.createElement(`div`);
-const eventCardsHtml = returnEventEditHtml(events[0]) + events.slice(1).map((it) => returnEventHtml(it)).join(``);
-renderHtmlInContainer(eventListTempContainer, `beforeend`, returnEventListHtml(eventCardsHtml));
+// const eventCardsHtml = returnEventEditHtml(events[0]) + events.slice(1).map((it) => returnEventHtml(it)).join(``);
+renderHtmlInContainer(eventListTempContainer, `beforeend`, returnEventListHtml(events));
 
 // Отрисовка строки сортировки и списка карточек
 const tripEventsSection = document.querySelector(`section.trip-events`);
 renderHtmlInContainer(tripEventsSection, `beforeend`, returnTripSortHtml() + eventListTempContainer.innerHTML);
 
 document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost();
-

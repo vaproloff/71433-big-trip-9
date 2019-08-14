@@ -1,6 +1,7 @@
-export const returnTripControlsHtml = () => `
+export const returnTripControlsHtml = (menus) => `
   <nav class="trip-controls__trip-tabs  trip-tabs">
-    <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-    <a class="trip-tabs__btn" href="#">Stats</a>
+    ${menus.map((it) => `
+      <a class="trip-tabs__btn  ${(menus[0] === it) ? `trip-tabs__btn--active` : ``}" href="#">${it}</a>
+    `).join(``)}
   </nav>
 `;

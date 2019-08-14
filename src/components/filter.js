@@ -1,20 +1,11 @@
-export const returnTripFiltersHtml = () => `
+export const returnTripFiltersHtml = (filters) => `
   <form class="trip-filters" action="#" method="get">
-    <div class="trip-filters__filter">
-      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
-      <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-    </div>
-
-    <div class="trip-filters__filter">
-      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-      <label class="trip-filters__filter-label" for="filter-future">Future</label>
-    </div>
-
-    <div class="trip-filters__filter">
-      <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
-      <label class="trip-filters__filter-label" for="filter-past">Past</label>
-    </div>
-
+    ${filters.map((it) => `
+      <div class="trip-filters__filter">
+        <input id="filter-${it.toLowerCase()}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${it.toLowerCase()}" ${(filters[0] === it) ? `checked` : ``}>
+        <label class="trip-filters__filter-label" for="filter-${it.toLowerCase()}">${it}</label>
+      </div>
+    `).join(``)}
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>
 `;

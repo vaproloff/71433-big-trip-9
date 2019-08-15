@@ -13,7 +13,7 @@ const renderHtmlInContainer = (container, place, html) => {
 
 const countTotalTripCost = () => {
   return events.reduce((acc, it) => {
-    return acc + it.price + Array.from(it.offers).reduce((sum, element) => {
+    return acc + it.price + [...it.offers].reduce((sum, element) => {
       return sum + element.price;
     }, 0);
   }, 0);
@@ -23,12 +23,11 @@ const tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
 renderHtmlInContainer(tripInfoSection, `afterbegin`, returnTripInfoHtml(events[0], events[events.length - 1]));
 
 const tripControlsHeadings = document.querySelectorAll(`.trip-main__trip-controls h2`);
-renderHtmlInContainer(tripControlsHeadings[0], `afterend`, returnTripControlsHtml(Array.from(menus)));
-renderHtmlInContainer(tripControlsHeadings[1], `afterend`, returnTripFiltersHtml(Array.from(filters)));
+renderHtmlInContainer(tripControlsHeadings[0], `afterend`, returnTripControlsHtml([...menus]));
+renderHtmlInContainer(tripControlsHeadings[1], `afterend`, returnTripFiltersHtml([...filters]));
 
 // Подготовка временного контейнера с карточками
 const eventListTempContainer = document.createElement(`div`);
-// const eventCardsHtml = returnEventEditHtml(events[0]) + events.slice(1).map((it) => returnEventHtml(it)).join(``);
 renderHtmlInContainer(eventListTempContainer, `beforeend`, returnEventListHtml(events));
 
 // Отрисовка строки сортировки и списка карточек

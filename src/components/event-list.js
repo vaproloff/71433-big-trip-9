@@ -1,7 +1,7 @@
 import {returnEventHtml} from "./event";
 import {returnEventEditHtml} from "./event-edit";
 
-const divideEventArray = (events) => {
+const splitEventsByDay = (events) => {
   const tempObject = {};
   events.forEach((it) => {
     if (typeof tempObject[new Date(it.timeStart).getDate()] === `undefined`) {
@@ -16,7 +16,7 @@ const formatDateToDayList = (timeStamp) => new Date(timeStamp).toLocaleString(`e
 
 export const returnEventListHtml = (events) => `
   <ul class="trip-days">
-  ${divideEventArray(events).map((it, index) => `
+  ${splitEventsByDay(events).map((it, index) => `
     <li class="trip-days__item  day">
       <div class="day__info">
         <span class="day__counter">${index + 1}</span>

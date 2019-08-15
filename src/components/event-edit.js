@@ -125,11 +125,11 @@ export const returnEventEditHtml = ({type, city, timeStart, duration, price, off
 
       <section class="event__details">
 
-        <section class="event__section  event__section--offers ${Array.from(offers).length ? `` : `visually-hidden`}">
+        <section class="event__section  event__section--offers ${[...offers].length ? `` : `visually-hidden`}">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${Array.from(offers).map((it) => `
+            ${[...offers].map((it) => `
               <div class="event__offer-selector">
               <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name}-1" type="checkbox" name="event-offer-${it.name}" ${it.isAdded ? `checked` : ``}>
               <label class="event__offer-label" for="event-offer-${it.name}-1">

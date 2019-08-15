@@ -4,12 +4,10 @@ import {getRandomlyReducedArray} from "./utils";
 
 const EVENTS_NUMBER = 4;
 const IMAGE_MAX_NUMBER = 10;
-const DESCRIPTION_MIN_SENTENCES = 1;
 const DESCRIPTION_MAX_SENTENCES = 3;
 const DAYS_IN_WEEK = 7;
 const MAX_TRIP_DURATION_DAYS = 3;
 const MAX_DURATION_IN_HOURS = 3;
-const OFFERS_MIN_NUMBER = 0;
 const OFFERS_MAX_NUMBER = 2;
 const MAX_PRICE = 300;
 const MILLISECONDS_IN_FIVE_MINUTES = 5 * 60 * 1000;
@@ -50,11 +48,11 @@ const generateRandomEvent = () => ({
   type: getRandomElementOfArray([...EVENT_TYPES[`Transfer`], ...EVENT_TYPES[`Activity`]]),
   city: getRandomElementOfArray(CITIES),
   imagesUrls: new Array(Math.round(Math.random() * IMAGE_MAX_NUMBER)).fill(``).map(() => `http://picsum.photos/300/150?r=${Math.random()}`),
-  description: getRandomlyReducedArray(DESCRIPTION.split(`. `), DESCRIPTION_MIN_SENTENCES, DESCRIPTION_MAX_SENTENCES).join(`. `),
+  description: getRandomlyReducedArray(DESCRIPTION.split(`. `), Math.ceil(Math.random() * DESCRIPTION_MAX_SENTENCES)).join(`. `),
   timeStart: roundUpToFiveMinutes(Date.now() + convertDaysToMilliseconds(Math.random() * MAX_TRIP_DURATION_DAYS + DAYS_IN_WEEK)),
   duration: roundUpToFiveMinutes(convertHoursToMilliseconds((Math.random() * (MAX_DURATION_IN_HOURS - 1) + 1))),
   price: Math.ceil(Math.random() * MAX_PRICE / 10) * 10,
-  offers: new Set(getRandomlyReducedArray(OFFERS, OFFERS_MIN_NUMBER, OFFERS_MAX_NUMBER).map((it) => {
+  offers: new Set(getRandomlyReducedArray(OFFERS, Math.round(Math.random() * OFFERS_MAX_NUMBER)).map((it) => {
     it.isAdded = true;
     return it;
   })),

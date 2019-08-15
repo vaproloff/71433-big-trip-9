@@ -2,8 +2,7 @@ export const getRandomElementOfArray = (arr) => arr[Math.floor(Math.random() * a
 
 export const getRandomBoolean = (probability = 1) => Boolean(Math.round(Math.random() * probability));
 
-export const getRandomlyReducedArray = (arr, minLength, maxLength) => {
+export const getRandomlyReducedArray = (arr, newLength) => {
   const arrCopy = arr.slice();
-  return new Array(Math.round(Math.random() * (maxLength - minLength) + minLength))
-    .fill(``).map(() => arrCopy.splice(Math.random() * arrCopy.length - 1, 1)[0]);
+  return new Array(newLength) .fill(``).map(() => arrCopy.splice(Math.random() * arrCopy.length - 1, 1)[0]);
 };

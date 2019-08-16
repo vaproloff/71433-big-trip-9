@@ -1,8 +1,5 @@
-import {CITIES, EVENT_TYPES} from "../data";
-
-const formatDateToEventEditCard = (timeStamp) => {
-  return new Date(timeStamp).toLocaleString(`en-US`, {hour12: false, day: `2-digit`, month: `2-digit`, year: `2-digit`, hour: `2-digit`, minute: `2-digit`});
-};
+import {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES} from "../data";
+import {formatDate} from "../utils";
 
 export const returnEventEditHtml = ({type, city, timeStart, duration, price, offers, imagesUrls, description, isFavorite}) => `
   <li class="trip-events__item">
@@ -16,24 +13,33 @@ export const returnEventEditHtml = ({type, city, timeStart, duration, price, off
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
           <div class="event__type-list">
-            ${Object.keys(EVENT_TYPES).map((it) => `
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">${it}</legend>
-                
-                ${EVENT_TYPES[it].map((eventType) => `
-                  <div class="event__type-item">
-                    <input id="event-type-${eventType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
-                    <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-1">${eventType}</label>
-                  </div>
-                `).join(``)}
-              </fieldset>
-            `).join(``)}
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Transfer</legend>
+              
+              ${TRANSFER_TYPES.map((it) => `
+                <div class="event__type-item">
+                  <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}">
+                  <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
+                </div>
+              `).join(``)}
+            </fieldset>
+            
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Activity</legend>
+              
+              ${ACTIVITY_TYPES.map((it) => `
+                <div class="event__type-item">
+                  <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}">
+                  <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
+                </div>
+              `).join(``)}
+            </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} ${(type === `Check-in` || type === `Restaurant` || type === `Sightseeing`) ? `in` : `to`}
+            ${type} ${(TRANSFER_TYPES.indexOf(type) === -1) ? `in` : `to`}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -46,12 +52,12 @@ export const returnEventEditHtml = ({type, city, timeStart, duration, price, off
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDateToEventEditCard(timeStart)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(timeStart, `MM/DD/YY, HH:MM`)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDateToEventEditCard(timeStart + duration)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(timeStart + duration, `MM/DD/YY, HH:MM`)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

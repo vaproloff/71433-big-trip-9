@@ -1,8 +1,9 @@
-import {formatDate} from "../utils";
+import {getFormattedDate, getISODate} from "../utils";
 import {TRANSFER_TYPES} from "../data";
 
 const MILLISECONDS_IN_HOUR = 1000 * 60 * 60;
 const MILLISECONDS_IN_MINUTE = 1000 * 60;
+const shortTimeOptions = [`en-US`, {hour: `2-digit`, minute: `2-digit`, hour12: false}];
 
 export const returnEventHtml = ({type, city, timeStart, duration, price, offers}) => `
   <li class="trip-events__item">
@@ -10,13 +11,13 @@ export const returnEventHtml = ({type, city, timeStart, duration, price, offers}
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${(TRANSFER_TYPES.indexOf(type) === -1) ? `in` : `to`} ${city}</h3>
+      <h3 class="event__title">${type} ${TRANSFER_TYPES.includes(type) ? `in` : `to`} ${city}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${formatDate(timeStart, `ISO`)}">${formatDate(timeStart, `HH:MM`)}</time>
+          <time class="event__start-time" datetime="${getISODate(timeStart)}">${getFormattedDate(timeStart, shortTimeOptions)}</time>
           &mdash;
-          <time class="event__end-time" datetime="${formatDate(timeStart + duration, `ISO`)}">${formatDate(timeStart + duration, `HH:MM`)}</time>
+          <time class="event__end-time" datetime="${getISODate(timeStart + duration)}">${getFormattedDate(timeStart + duration, shortTimeOptions)}</time>
         </p>
         <p class="event__duration">${Math.trunc(duration / (MILLISECONDS_IN_HOUR))}H ${Math.trunc((duration / (MILLISECONDS_IN_MINUTE)) % 60)}M</p>
       </div>

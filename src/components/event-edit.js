@@ -1,5 +1,7 @@
 import {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES} from "../data";
-import {formatDate} from "../utils";
+import {getFormattedDate} from "../utils";
+
+const fullDateTimeOptions = [`en-US`, {day: `2-digit`, month: `2-digit`, year: `2-digit`, hour: `2-digit`, minute: `2-digit`, hour12: false}];
 
 export const returnEventEditHtml = ({type, city, timeStart, duration, price, offers, imagesUrls, description, isFavorite}) => `
   <li class="trip-events__item">
@@ -39,7 +41,7 @@ export const returnEventEditHtml = ({type, city, timeStart, duration, price, off
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} ${(TRANSFER_TYPES.indexOf(type) === -1) ? `in` : `to`}
+            ${type} ${TRANSFER_TYPES.includes(type) ? `in` : `to`}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -52,12 +54,12 @@ export const returnEventEditHtml = ({type, city, timeStart, duration, price, off
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatDate(timeStart, `MM/DD/YY, HH:MM`)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormattedDate(timeStart, fullDateTimeOptions)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatDate(timeStart + duration, `MM/DD/YY, HH:MM`)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormattedDate(timeStart + duration, fullDateTimeOptions)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

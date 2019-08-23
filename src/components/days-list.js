@@ -1,21 +1,10 @@
-import {getFormattedDate, getISODate, DateOption, createElement, unrenderElement} from '../utils';
+import {getFormattedDate, getISODate, DateOption} from '../utils';
+import AbstractComponent from './abstract-component';
 
-class EventDaysList {
+class EventDaysList extends AbstractComponent {
   constructor(days) {
+    super();
     this._days = days;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    unrenderElement(this._element);
-    this._element = null;
   }
 
   getTemplate() {

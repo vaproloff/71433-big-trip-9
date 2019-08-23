@@ -1,30 +1,13 @@
+import EventCard from './event';
 import {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES} from '../data';
-import {getFormattedDate, createElement, DateOption, unrenderElement} from '../utils';
+import {getFormattedDate, DateOption} from '../utils';
 
-class EventEditCard {
-  constructor({type, city, timeStart, duration, price, offers, imagesUrls, description, isFavorite}) {
-    this._type = type;
-    this._city = city;
-    this._timeStart = timeStart;
-    this._duration = duration;
-    this._price = price;
-    this._offers = offers;
-    this._imagesUrls = imagesUrls;
-    this._description = description;
-    this._isFavorite = isFavorite;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    unrenderElement(this._element);
-    this._element = null;
+class EventEditCard extends EventCard {
+  constructor(event) {
+    super(event);
+    this._imagesUrls = event.imagesUrls;
+    this._description = event.description;
+    this._isFavorite = event.isFavorite;
   }
 
   getTemplate() {
@@ -113,11 +96,11 @@ class EventEditCard {
     
           <section class="event__details">
     
-            <section class="event__section  event__section--offers ${this._offers.size ? `` : `visually-hidden`}">
+            <section class="event__section  event__section--offers ${this._offers.length ? `` : `visually-hidden`}">
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     
               <div class="event__available-offers">
-                ${[...this._offers].map((it) => `
+                ${this._offers.map((it) => `
                   <div class="event__offer-selector">
                   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name}-1" type="checkbox" name="event-offer-${it.name}" ${it.isAdded ? `checked` : ``}>
                   <label class="event__offer-label" for="event-offer-${it.name}-1">

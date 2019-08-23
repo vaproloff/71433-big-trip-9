@@ -1,17 +1,11 @@
-import {createElement, DateOption, getFormattedDate} from '../utils';
+import {DateOption, getFormattedDate} from '../utils';
+import AbstractComponent from './abstract-component';
 
-class TripInfo {
+class TripInfo extends AbstractComponent {
   constructor(firstEvent, lastEvent) {
+    super();
     this._firstEvent = firstEvent;
     this._lastEvent = lastEvent;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
   }
 
   static getTripDatesString(firstDate, lastDate) {

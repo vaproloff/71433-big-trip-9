@@ -1,30 +1,19 @@
-import {getFormattedDate, getISODate, createElement, DateOption, unrenderElement} from '../utils';
+import AbstractComponent from './abstract-component';
+import {getFormattedDate, getISODate, DateOption} from '../utils';
 import {TRANSFER_TYPES} from '../data';
 
 const MILLISECONDS_IN_HOUR = 1000 * 60 * 60;
 const MILLISECONDS_IN_MINUTE = 1000 * 60;
 
-class EventCard {
-  constructor({type, city, timeStart, duration, price, offers}) {
-    this._type = type;
-    this._city = city;
-    this._timeStart = timeStart;
-    this._duration = duration;
-    this._price = price;
-    this._offers = offers;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    unrenderElement(this._element);
-    this._element = null;
+class EventCard extends AbstractComponent {
+  constructor(event) {
+    super();
+    this._type = event.type;
+    this._city = event.city;
+    this._timeStart = event.timeStart;
+    this._duration = event.duration;
+    this._price = event.price;
+    this._offers = event.offers;
   }
 
   getTemplate() {
@@ -51,7 +40,7 @@ class EventCard {
     
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-            ${[...this._offers].map((it) => `<li class="event__offer">
+            ${this._offers.map((it) => `<li class="event__offer">
               <span class="event__offer-title">${it.title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${it.price}</span>

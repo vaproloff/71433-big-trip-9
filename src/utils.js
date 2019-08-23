@@ -52,7 +52,7 @@ export const renderElement = (container, place, element) => {
   }
 };
 
-export const unrenderElement = (element) => {
+export const deleteElement = (element) => {
   if (element) {
     element.remove();
   }
@@ -72,7 +72,7 @@ export const splitEventsByDay = (events) => {
 
 export const countTotalTripCost = (events) => {
   return events.reduce((acc, it) => {
-    return acc + it.price + [...it.offers].reduce((sum, element) => {
+    return acc + it.price + it.offers.reduce((sum, element) => {
       return sum + element.price;
     }, 0);
   }, 0);

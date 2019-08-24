@@ -1,4 +1,4 @@
-import {Position, renderElement, splitEventsByDay} from './utils';
+import {countTotalTripCost, Position, renderElement, splitEventsByDay} from './utils';
 import TripInfo from './components/trip-info';
 import TripSort from './components/sort';
 import EventDaysList from './components/days-list';
@@ -9,14 +9,11 @@ import NoEventsMessage from './components/no-events';
 class TripController {
   constructor(tripEventsSection, days, events) {
     this._tripEventsSection = tripEventsSection;
+    this._daysList = new EventDaysList(days);
     this._events = events;
     this._tripSort = new TripSort();
     this._noEventsMessage = new NoEventsMessage();
-    if (this._events.length) {
-      this._tripInfo = new TripInfo(this._events[0], this._events[this._events.length - 1]);
-      this._daysList = new EventDaysList(days);
-      this._splittedEventsByDay = splitEventsByDay(this._events);
-    }
+    this._tripInfo = null;
   }
 
   _renderEventCard(eventMock, container, fragment) {
@@ -54,14 +51,17 @@ class TripController {
   init() {
     if (this._events.length) {
       const tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
+      this._tripInfo = new TripInfo(this._events[0], this._events[this._events.length - 1]);
       renderElement(tripInfoSection, Position.AFTERBEGIN, this._tripInfo.getElement());
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._tripSort.getElement());
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._daysList.getElement());
-      const eventCardsLists = this._tripEventsSection.getElement().querySelectorAll(`.trip-events__list`);
-      eventCardsLists.forEach((it, i) => this._renderDailyEvents(this._splittedEventsByDay[i], it));
+      const eventCardsLists = this._tripEventsSection.querySelectorAll(`.trip-events__list`);
+      const splittedEventsByDay = splitEventsByDay(this._events);
+      eventCardsLists.forEach((it, i) => this._renderDailyEvents(splittedEventsByDay[i], it));
     } else {
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._noEventsMessage.getElement());
     }
+    document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
   }
 }
 

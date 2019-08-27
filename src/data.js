@@ -1,6 +1,6 @@
 import {getRandomElementOfArray, getRandomBoolean, getRandomlyReducedArray, splitEventsByDay} from './utils';
 
-const EVENTS_NUMBER = 4;
+const EVENTS_NUMBER = 5;
 const IMAGE_MAX_NUMBER = 10;
 const DESCRIPTION_MAX_SENTENCES = 3;
 const DAYS_IN_WEEK = 7;

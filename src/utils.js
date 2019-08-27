@@ -77,3 +77,20 @@ export const countTotalTripCost = (events) => {
     }, 0);
   }, 0);
 };
+
+export const getTripInfoCities = (allEvents) => {
+  return allEvents.reduce((acc, it, i, arr) => {
+    if (i === 0) {
+      acc.push(it.city);
+      return acc;
+    } else if ((arr.length === 2 && it.city === arr[i - 1].city) || (arr.length === 3 && it.city === arr[i - 1].city)) {
+      return acc;
+    } else if (arr.length === 2 || arr.length === 3 || (i + 1) === arr.length) {
+      acc.push(it.city);
+      return acc;
+    } else {
+      acc[1] = `...`;
+      return acc;
+    }
+  }, []);
+};

@@ -1,4 +1,4 @@
-import {Position, renderElement, countTotalTripCost} from './utils';
+import {Position, renderElement, countTotalTripCost, getTripInfoCities} from './utils';
 import {events, menus, filters, days, splittedEventsByDay} from './data';
 import TripInfo from './components/trip-info';
 import Menu from './components/menu';
@@ -40,6 +40,7 @@ const renderDailyEvents = (eventsMocks, container) => {
   renderElement(container, Position.BEFOREEND, documentFragment);
 };
 
+
 const tripControlsHeadings = document.querySelectorAll(`.trip-main__trip-controls h2`);
 renderElement(tripControlsHeadings[0], Position.AFTEREND, new Menu([...menus]).getElement());
 renderElement(tripControlsHeadings[1], Position.AFTEREND, new TripFilter([...filters]).getElement());
@@ -48,7 +49,10 @@ const tripEventsSection = document.querySelector(`section.trip-events`);
 
 if (events.length) {
   const tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
-  renderElement(tripInfoSection, Position.AFTERBEGIN, new TripInfo(events[0], events[events.length - 1]).getElement());
+  renderElement(tripInfoSection, Position.AFTERBEGIN,
+      new TripInfo(events[0].timeStart,
+          events[events.length - 1].timeStart + events[events.length - 1].duration,
+          getTripInfoCities(events)).getElement());
 
   renderElement(tripEventsSection, Position.BEFOREEND, new TripSort().getElement());
   const daysList = new EventDaysList(days);

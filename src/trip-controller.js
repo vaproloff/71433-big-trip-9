@@ -9,11 +9,12 @@ import NoEventsMessage from './components/no-events';
 class TripController {
   constructor(tripEventsSection, days, events) {
     this._tripEventsSection = tripEventsSection;
+    this._tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
+    this._tripInfo = null;
+    this._tripSort = new TripSort();
     this._daysList = new EventDaysList(days);
     this._events = events;
-    this._tripSort = new TripSort();
     this._noEventsMessage = new NoEventsMessage();
-    this._tripInfo = null;
   }
 
   _renderEventCard(eventMock, container, fragment) {
@@ -50,11 +51,10 @@ class TripController {
 
   init() {
     if (this._events.length) {
-      const tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
       const tripStartTime = this._events[0].timeStart;
       const tripFinishTime = this._events[this._events.length - 1].timeStart + this._events[this._events.length - 1].duration;
       this._tripInfo = new TripInfo(tripStartTime, tripFinishTime, getTripInfoRoute(this._events)).getElement();
-      renderElement(tripInfoSection, Position.AFTERBEGIN, this._tripInfo);
+      renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo);
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._tripSort.getElement());
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._daysList.getElement());
       const eventCardsLists = this._tripEventsSection.querySelectorAll(`.trip-events__list`);

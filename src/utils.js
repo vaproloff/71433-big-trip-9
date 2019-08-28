@@ -52,7 +52,7 @@ export const renderElement = (container, place, element) => {
   }
 };
 
-export const unrenderElement = (element) => {
+export const deleteElement = (element) => {
   if (element) {
     element.remove();
   }
@@ -72,8 +72,18 @@ export const splitEventsByDay = (events) => {
 
 export const countTotalTripCost = (events) => {
   return events.reduce((acc, it) => {
-    return acc + it.price + [...it.offers].reduce((sum, element) => {
+    return acc + it.price + it.offers.reduce((sum, element) => {
       return sum + element.price;
     }, 0);
   }, 0);
+};
+
+export const getTripInfoRoute = (events) => {
+  const cities = events.map((it) => it.city).filter((it, i, arr) => it !== arr[i - 1]);
+
+  const firstPoint = cities[0];
+  const transitPoint = `${cities.length === 3 ? ` &mdash; ${cities[1]}` : ``}${cities.length > 3 ? ` &mdash; ...` : ``}`;
+  const lastPoint = cities.length > 1 ? ` &mdash; ${cities[cities.length - 1]}` : ``;
+
+  return `${firstPoint}${transitPoint}${lastPoint}`;
 };

@@ -1,37 +1,36 @@
-import {createElement, DateOption, getFormattedDate} from '../utils';
+import {DateOption, getFormattedDate} from '../utils';
+import AbstractComponent from './abstract-component';
 
-class TripInfo {
-  constructor(firstEvent, lastEvent) {
-    this._firstEvent = firstEvent;
-    this._lastEvent = lastEvent;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+class TripInfo extends AbstractComponent {
+  constructor(startDate, finishDate, route) {
+    super();
+    this._startDate = startDate;
+    this._finishDate = finishDate;
+    this._route = route;
   }
 
   static getTripDatesString(firstDate, lastDate) {
     const start = getFormattedDate(firstDate, DateOption.SHORT_DAY_MONTH);
-
+    const startMonth = new Date(firstDate).getMonth();
+    const startDay = new Date(firstDate).getDate();
+    const finishMonth = new Date(lastDate).getMonth();
+    const finishDay = new Date(lastDate).getDate();
     let finish;
-    if (new Date(lastDate).getMonth() === new Date(firstDate).getMonth()) {
-      finish = getFormattedDate(lastDate, DateOption.SHORT_DAY);
-    } else {
+
+    if (finishMonth !== startMonth) {
       finish = getFormattedDate(lastDate, DateOption.SHORT_DAY_MONTH);
+    } else if (finishDay !== startDay) {
+      finish = getFormattedDate(lastDate, DateOption.SHORT_DAY);
     }
-    return `${start}&nbsp;&mdash;&nbsp;${finish}`;
+    return `${start}${finish ? `&nbsp;&mdash;&nbsp;${finish}` : ``}`;
   }
 
   getTemplate() {
     return `
       <div class="trip-info__main">
-        <h1 class="trip-info__title">${this._firstEvent.city} &mdash; ... &mdash; ${this._lastEvent.city}</h1>
+        <h1 class="trip-info__title">${this._route}</h1>
     
-        <p class="trip-info__dates">${TripInfo.getTripDatesString(this._firstEvent.timeStart, this._lastEvent.timeStart + this._lastEvent.duration)}</p>
+        <p class="trip-info__dates">${TripInfo.getTripDatesString(this._startDate, this._finishDate)}</p>
       </div>
     `;
   }

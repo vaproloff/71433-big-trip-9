@@ -49,16 +49,16 @@ const generateRandomEvent = () => ({
   timeStart: roundUpToFiveMinutes(Date.now() + convertDaysToMilliseconds(Math.random() * MAX_TRIP_DURATION_DAYS + DAYS_IN_WEEK)),
   duration: roundUpToFiveMinutes(convertHoursToMilliseconds((Math.random() * (MAX_DURATION_IN_HOURS - 1) + 1))),
   price: Math.ceil(Math.random() * MAX_PRICE / 10) * 10,
-  offers: new Set(getRandomlyReducedArray(OFFERS, Math.round(Math.random() * OFFERS_MAX_NUMBER)).map((it) => {
+  offers: [...new Set(getRandomlyReducedArray(OFFERS, Math.round(Math.random() * OFFERS_MAX_NUMBER)).map((it) => {
     it.isAdded = true;
     return it;
-  })),
+  }))],
   isFavorite: getRandomBoolean()
 });
 
 export const events = new Array(EVENTS_NUMBER).fill(``).map(() => generateRandomEvent()).sort((a, b) => a.timeStart - b.timeStart);
 export const splittedEventsByDay = splitEventsByDay(events);
 export const days = [...new Set(events.map((it) => new Date(it.timeStart).setHours(0, 0, 0, 0)))];
-export const menus = new Set([`Table`, `Stats`]);
-export const filters = new Set([`Everything`, `Future`, `Past`]);
+export const menus = [...new Set([`Table`, `Stats`])];
+export const filters = [...new Set([`Everything`, `Future`, `Past`])];
 export {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES};

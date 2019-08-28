@@ -54,16 +54,10 @@ class TripController {
     renderElement(container, Position.BEFOREEND, documentFragment);
   }
 
-  _renderEventsByDefault() {
-    renderElement(this._tripEventsSection, Position.BEFOREEND, this._daysList.getElement());
-    const eventCardsLists = this._daysList.getElement().querySelectorAll(`.trip-events__list`);
-    eventCardsLists.forEach((it, i) => this._renderDailyEvents(this._splittedEventsByDay[i], it));
-  }
-
-  _renderSortedEvents(sortedEvents) {
-    renderElement(this._tripEventsSection, Position.BEFOREEND, this._emptyDaysList.getElement());
-    const eventCardsList = this._tripEventsSection.querySelector(`.trip-events__list`);
-    this._renderDailyEvents(sortedEvents, eventCardsList);
+  _renderEvents(events, container) {
+    renderElement(this._tripEventsSection, Position.BEFOREEND, container);
+    const eventCardsLists = container.querySelectorAll(`.trip-events__list`);
+    eventCardsLists.forEach((it, i) => this._renderDailyEvents(events[i], it));
   }
 
   _onTripSortClick(evt) {
@@ -73,15 +67,14 @@ class TripController {
       switch (evt.target.dataset.sortType) {
         case `time`:
           this._sortedEvents = this._events.slice().sort((a, b) => b.duration - a.duration);
-          this._renderSortedEvents(this._sortedEvents);
+          this._renderEvents([this._sortedEvents], this._emptyDaysList.getElement());
           break;
         case `price`:
           this._sortedEvents = this._events.slice().sort((a, b) => a.price - b.price);
-          this._renderSortedEvents(this._sortedEvents);
+          this._renderEvents([this._sortedEvents], this._emptyDaysList.getElement());
           break;
         case `default`:
-          this._sortedEvents = this._events;
-          this._renderEventsByDefault();
+          this._renderEvents(this._splittedEventsByDay, this._daysList.getElement());
           break;
       }
     }
@@ -95,7 +88,7 @@ class TripController {
       renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo);
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._tripSort.getElement());
       this._tripSort.getElement().addEventListener(`click`, (evt) => this._onTripSortClick(evt));
-      this._renderEventsByDefault();
+      this._renderEvents(this._splittedEventsByDay, this._daysList.getElement());
     } else {
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._noEventsMessage.getElement());
     }

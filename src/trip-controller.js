@@ -22,13 +22,15 @@ class TripController {
     const eventCardEdit = new EventEditCard(eventMock);
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        onEditFormSubmit();
+        onEditingCardClose();
       }
     };
+    const onEditingCardClose = () => {
+      container.replaceChild(eventCard.getElement(), eventCardEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    };
     const onEditFormSubmit = (evt) => {
-      if (evt) {
-        evt.preventDefault();
-      }
+      evt.preventDefault();
       container.replaceChild(eventCard.getElement(), eventCardEdit.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
@@ -38,7 +40,7 @@ class TripController {
     };
 
     eventCard.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEventEditClick);
-    eventCardEdit.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEditFormSubmit);
+    eventCardEdit.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEditingCardClose);
     eventCardEdit.getElement().querySelector(`form.event--edit`).addEventListener(`submit`, onEditFormSubmit);
     renderElement(fragment, Position.BEFOREEND, eventCard.getElement());
   }

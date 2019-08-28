@@ -1,4 +1,4 @@
-import {countTotalTripCost, Position, renderElement, splitEventsByDay} from './utils';
+import {countTotalTripCost, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './utils';
 import TripInfo from './components/trip-info';
 import TripSort from './components/sort';
 import EventDaysList from './components/days-list';
@@ -51,8 +51,10 @@ class TripController {
   init() {
     if (this._events.length) {
       const tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
-      this._tripInfo = new TripInfo(this._events[0], this._events[this._events.length - 1]);
-      renderElement(tripInfoSection, Position.AFTERBEGIN, this._tripInfo.getElement());
+      const tripStartTime = this._events[0].timeStart;
+      const tripFinishTime = this._events[this._events.length - 1].timeStart + this._events[this._events.length - 1].duration;
+      this._tripInfo = new TripInfo(tripStartTime, tripFinishTime, getTripInfoRoute(this._events)).getElement();
+      renderElement(tripInfoSection, Position.AFTERBEGIN, this._tripInfo);
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._tripSort.getElement());
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._daysList.getElement());
       const eventCardsLists = this._tripEventsSection.querySelectorAll(`.trip-events__list`);

@@ -78,19 +78,7 @@ export const countTotalTripCost = (events) => {
   }, 0);
 };
 
-export const getTripInfoCities = (allEvents) => {
-  return allEvents.reduce((acc, it, i, arr) => {
-    if (i === 0) {
-      acc.push(it.city);
-      return acc;
-    } else if ((arr.length === 2 && it.city === arr[i - 1].city) || (arr.length === 3 && it.city === arr[i - 1].city)) {
-      return acc;
-    } else if (arr.length === 2 || arr.length === 3 || (i + 1) === arr.length) {
-      acc.push(it.city);
-      return acc;
-    } else {
-      acc[1] = `...`;
-      return acc;
-    }
-  }, []);
+export const getTripInfoRoute = (events) => {
+  const cities = events.map((it) => it.city).filter((it, i, arr) => it !== arr[i - 1]);
+  return `${cities[0]}${cities.length > 1 ? ` &mdash; ${cities.length > 2 ? `${cities.length > 3 ? `...` : cities[1]} &mdash; ${cities[cities.length - 1]}` : cities[1]}` : ``}`;
 };

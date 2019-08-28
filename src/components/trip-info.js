@@ -9,19 +9,6 @@ class TripInfo extends AbstractComponent {
     this._route = route;
   }
 
-  // static getTripDatesString(firstDate, lastDate) {
-  //   const start = getFormattedDate(firstDate, DateOption.SHORT_DAY_MONTH);
-  //   let finish;
-  //   if (new Date(lastDate).getMonth() === new Date(firstDate).getMonth()) {
-  //     if (new Date(lastDate).getDate() !== new Date(firstDate).getDate()) {
-  //       finish = getFormattedDate(lastDate, DateOption.SHORT_DAY);
-  //     }
-  //   } else {
-  //     finish = getFormattedDate(lastDate, DateOption.SHORT_DAY_MONTH);
-  //   }
-  //   return `${start}${finish ? `&nbsp;&mdash;&nbsp;${finish}` : ``}`;
-  // }
-
   static getTripDatesString(firstDate, lastDate) {
     const start = getFormattedDate(firstDate, DateOption.SHORT_DAY_MONTH);
     const startMonth = new Date(firstDate).getMonth();

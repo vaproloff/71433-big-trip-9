@@ -80,5 +80,10 @@ export const countTotalTripCost = (events) => {
 
 export const getTripInfoRoute = (events) => {
   const cities = events.map((it) => it.city).filter((it, i, arr) => it !== arr[i - 1]);
-  return `${cities[0]}${cities.length > 1 ? ` &mdash; ${cities.length > 2 ? `${cities.length > 3 ? `...` : cities[1]} &mdash; ${cities[cities.length - 1]}` : cities[1]}` : ``}`;
+
+  const firstPoint = cities[0];
+  const transitPoint = `${cities.length === 3 ? ` &mdash; ${cities[1]}` : ``}${cities.length > 3 ? ` &mdash; ...` : ``}`;
+  const lastPoint = cities.length > 1 ? ` &mdash; ${cities[cities.length - 1]}` : ``;
+
+  return `${firstPoint}${transitPoint}${lastPoint}`;
 };

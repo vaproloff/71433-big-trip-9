@@ -10,7 +10,7 @@ class EventDaysList extends AbstractComponent {
   getTemplate() {
     return `
       <ul class="trip-days">
-        ${this._days.map((it, index) => `
+        ${this._days ? this._days.map((it, index) => `
           <li class="trip-days__item  day">
             <div class="day__info">
               <span class="day__counter">${index + 1}</span>
@@ -19,7 +19,13 @@ class EventDaysList extends AbstractComponent {
             <ul class="trip-events__list">
             
             </ul>
-          </li>`).join(``)}
+          </li>`).join(``) : `
+          <li class="trip-days__item  day">
+            <div class="day__info"></div>
+            <ul class="trip-events__list">
+            
+            </ul>
+          </li>`}
       </ul>
     `;
   }

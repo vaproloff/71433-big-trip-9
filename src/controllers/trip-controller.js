@@ -19,11 +19,13 @@ class TripController {
     this._currentSortingType = `default`;
 
     this._subscriptions = [];
+    this._flatpickrs = [];
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
   }
 
   _onDataChange(newEvent, oldEvent) {
+    this._flatpickrs.forEach((it) => it());
     this._events[this._events.indexOf(oldEvent)] = newEvent;
     this._daysList.removeElement();
     this._emptyDaysList.removeElement();
@@ -39,6 +41,7 @@ class TripController {
   _renderEventCard(eventMock, container, fragment) {
     const pointController = new PointController(container, fragment, eventMock, this._onDataChange, this._onChangeView);
     this._subscriptions.push(pointController.setDefaultView.bind(pointController));
+    this._flatpickrs.push(pointController.clearFlatpickr.bind(pointController));
   }
 
   _renderDailyEvents(eventsMocks, container) {

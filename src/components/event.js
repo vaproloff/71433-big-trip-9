@@ -1,9 +1,7 @@
 import AbstractComponent from './abstract-component';
-import {getFormattedDate, getISODate, DateOption} from '../utils';
 import {TRANSFER_TYPES} from '../data';
-
-const MILLISECONDS_IN_HOUR = 1000 * 60 * 60;
-const MILLISECONDS_IN_MINUTE = 1000 * 60;
+import {getFormattedDuration} from '../utils';
+import moment from 'moment';
 
 class EventCard extends AbstractComponent {
   constructor(event) {
@@ -27,11 +25,11 @@ class EventCard extends AbstractComponent {
     
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="${getISODate(this._timeStart)}">${getFormattedDate(this._timeStart, DateOption.SHORT_TIME)}</time>
+              <time class="event__start-time" datetime="${moment(this._timeStart).toISOString()}">${moment(this._timeStart).format(`HH:mm`)}</time>
               &mdash;
-              <time class="event__end-time" datetime="${getISODate(this._timeStart + this._duration)}">${getFormattedDate(this._timeStart + this._duration, DateOption.SHORT_TIME)}</time>
+              <time class="event__end-time" datetime="${moment(this._timeStart + this._duration).toISOString()}">${moment(this._timeStart + this._duration).format(`HH:mm`)}</time>
             </p>
-            <p class="event__duration">${Math.trunc(this._duration / (MILLISECONDS_IN_HOUR))}H ${Math.trunc((this._duration / (MILLISECONDS_IN_MINUTE)) % 60)}M</p>
+            <p class="event__duration">${getFormattedDuration(this._duration)}</p>
           </div>
     
           <p class="event__price">

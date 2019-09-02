@@ -1,5 +1,5 @@
-import {getFormattedDate, getISODate, DateOption} from '../utils';
 import AbstractComponent from './abstract-component';
+import moment from 'moment';
 
 class EventDaysList extends AbstractComponent {
   constructor(days) {
@@ -14,7 +14,7 @@ class EventDaysList extends AbstractComponent {
           <li class="trip-days__item  day">
             <div class="day__info">
               <span class="day__counter">${index + 1}</span>
-              <time class="day__date" datetime="${getISODate(it).split(`T`)[0]}">${getFormattedDate(it, DateOption.SHORT_DAY_MONTH)}</time>
+              <time class="day__date" datetime="${moment(it).toISOString().split(`T`)[0]}">${moment(it).format(`MMM D`)}</time>
             </div>
             <ul class="trip-events__list">
             

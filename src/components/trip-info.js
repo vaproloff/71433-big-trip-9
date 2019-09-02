@@ -1,5 +1,5 @@
-import {DateOption, getFormattedDate} from '../utils';
 import AbstractComponent from './abstract-component';
+import moment from 'moment';
 
 class TripInfo extends AbstractComponent {
   constructor(startDate, finishDate, route) {
@@ -10,7 +10,7 @@ class TripInfo extends AbstractComponent {
   }
 
   static getTripDatesString(firstDate, lastDate) {
-    const start = getFormattedDate(firstDate, DateOption.SHORT_DAY_MONTH);
+    const start = moment(firstDate).format(`MMM D`);
     const startMonth = new Date(firstDate).getMonth();
     const startDay = new Date(firstDate).getDate();
     const finishMonth = new Date(lastDate).getMonth();
@@ -18,9 +18,9 @@ class TripInfo extends AbstractComponent {
     let finish;
 
     if (finishMonth !== startMonth) {
-      finish = getFormattedDate(lastDate, DateOption.SHORT_DAY_MONTH);
+      finish = moment(lastDate).format(`MMM D`);
     } else if (finishDay !== startDay) {
-      finish = getFormattedDate(lastDate, DateOption.SHORT_DAY);
+      finish = moment(lastDate).format(`D`);
     }
     return `${start}${finish ? `&nbsp;&mdash;&nbsp;${finish}` : ``}`;
   }

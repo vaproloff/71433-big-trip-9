@@ -2,7 +2,7 @@ import {Position, renderElement} from './utils';
 import {events, menus, filters, days} from './data';
 import Menu from './components/menu';
 import TripFilter from './components/filter';
-import TripController from './trip-controller';
+import TripController from './controllers/trip-controller';
 
 
 const tripControlsHeadings = document.querySelectorAll(`.trip-main__trip-controls h2`);

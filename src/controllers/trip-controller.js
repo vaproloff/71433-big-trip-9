@@ -1,10 +1,9 @@
-import {countTotalTripCost, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './utils';
-import TripInfo from './components/trip-info';
-import TripSort from './components/sort';
-import EventDaysList from './components/days-list';
-import EventCard from './components/event';
-import EventEditCard from './components/event-edit';
-import NoEventsMessage from './components/no-events';
+import {countTotalTripCost, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './../utils';
+import TripInfo from './../components/trip-info';
+import TripSort from './../components/sort';
+import EventDaysList from './../components/days-list';
+import NoEventsMessage from './../components/no-events';
+import PointController from './point-controller';
 
 class TripController {
   constructor(tripEventsSection, days, events) {
@@ -18,34 +17,21 @@ class TripController {
     this._splittedEventsByDay = splitEventsByDay(this._events);
     this._sortedEvents = this._events;
     this._noEventsMessage = new NoEventsMessage();
+    this._currentSortingType = `default`;
+
+    this._onDataChange = this._onDataChange.bind(this);
+  }
+
+  _onDataChange(newEvent, oldEvent) {
+    this._events[this._events.indexOf(oldEvent)] = newEvent;
+    this._splittedEventsByDay = splitEventsByDay(this._events);
+    this._daysList.removeElement();
+    this._emptyDaysList.removeElement();
+    this._renderEvents(this._splittedEventsByDay, this._daysList.getElement());
   }
 
   _renderEventCard(eventMock, container, fragment) {
-    const eventCard = new EventCard(eventMock);
-    const eventCardEdit = new EventEditCard(eventMock);
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        onEditingCardClose();
-      }
-    };
-    const onEditingCardClose = () => {
-      container.replaceChild(eventCard.getElement(), eventCardEdit.getElement());
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-    const onEditFormSubmit = (evt) => {
-      evt.preventDefault();
-      container.replaceChild(eventCard.getElement(), eventCardEdit.getElement());
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-    const onEventEditClick = () => {
-      container.replaceChild(eventCardEdit.getElement(), eventCard.getElement());
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    eventCard.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEventEditClick);
-    eventCardEdit.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEditingCardClose);
-    eventCardEdit.getElement().querySelector(`form.event--edit`).addEventListener(`submit`, onEditFormSubmit);
-    renderElement(fragment, Position.BEFOREEND, eventCard.getElement());
+    const pointController = new PointController(container, fragment, eventMock, this._onDataChange);
   }
 
   _renderDailyEvents(eventsMocks, container) {
@@ -61,10 +47,11 @@ class TripController {
   }
 
   _onTripSortClick(evt) {
-    if (evt.target.tagName === `INPUT`) {
+    if (evt.target.tagName === `INPUT` && evt.target.dataset.sortType !== this._currentSortingType) {
       this._daysList.removeElement();
       this._emptyDaysList.removeElement();
-      switch (evt.target.dataset.sortType) {
+      this._currentSortingType = evt.target.dataset.sortType;
+      switch (this._currentSortingType) {
         case `time`:
           this._sortedEvents = this._events.slice().sort((a, b) => b.duration - a.duration);
           this._renderEvents([this._sortedEvents], this._emptyDaysList.getElement());

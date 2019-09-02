@@ -28,7 +28,7 @@ class EventEditCard extends EventCard {
                   
                   ${TRANSFER_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}">
+                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
                     </div>
                   `).join(``)}
@@ -39,7 +39,7 @@ class EventEditCard extends EventCard {
                   
                   ${ACTIVITY_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}">
+                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
                     </div>
                   `).join(``)}

@@ -35,6 +35,10 @@ export const createElement = (html) => {
   }
 };
 
+export const getFirstCapital = (str) => {
+  return str ? str[0].toUpperCase() + str.slice(1) : ``;
+};
+
 export const renderElement = (container, place, element) => {
   switch (place) {
     case Position.AFTERBEGIN:

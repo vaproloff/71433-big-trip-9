@@ -42,12 +42,8 @@ const convertHoursToMilliseconds = (hours) => hours * 60 * 60 * 1000;
 const roundUpToFiveMinutes = (timeStamp) => Math.trunc(timeStamp / MILLISECONDS_IN_FIVE_MINUTES) * MILLISECONDS_IN_FIVE_MINUTES;
 
 const getRandomOffers = () => {
-  const offersExamplesCopy = OFFERS_EXAMPLES.slice().map((it) => Object.assign({}, it));
-  const randomOffers = getRandomlyReducedArray(offersExamplesCopy, Math.round(Math.random() * OFFERS_MAX_NUMBER));
-  return [...new Set(randomOffers.map((it) => {
-    it.isAdded = getRandomBoolean();
-    return it;
-  }))];
+  const offersExamplesCopy = OFFERS_EXAMPLES.map((it) => Object.assign({}, it, {isAdded: getRandomBoolean()}));
+  return getRandomlyReducedArray(offersExamplesCopy, Math.round(Math.random() * OFFERS_MAX_NUMBER));
 };
 const getRandomImageUrls = () => {
   return new Array(Math.ceil(Math.random() * IMAGE_MAX_NUMBER))

@@ -18,7 +18,7 @@ export const getRandomBoolean = (probability = 1) => Boolean(Math.round(Math.ran
 
 export const getRandomlyReducedArray = (arr, newLength) => {
   const arrCopy = arr.slice();
-  return new Array(newLength) .fill(``).map(() => arrCopy.splice(Math.random() * arrCopy.length - 1, 1)[0]);
+  return arr.slice(0, newLength).map(() => arrCopy.splice(Math.random() * arrCopy.length - 1, 1)[0]);
 };
 
 export const getFormattedDate = (timeStamp, localFormat) => new Date(timeStamp).toLocaleString(...localFormat);
@@ -93,7 +93,7 @@ export const getTripInfoRoute = (events) => {
 };
 
 export const parseOffers = (offersExamples, offersInputs) => {
-  const offersExamplesCopy = offersExamples.slice().map((it) => Object.assign({}, it));
+  const offersExamplesCopy = offersExamples.map((it) => Object.assign({}, it));
   const offersChosen = [...offersInputs].map((input) => input.name.split(`-`)[2]);
   const offersIsAdded = [...offersInputs].map((input) => input.checked);
   return offersExamplesCopy.filter((it) => offersChosen.includes(it.name)).map((it, index) => {

@@ -92,10 +92,11 @@ export const getTripInfoRoute = (events) => {
   return `${firstPoint}${transitPoint}${lastPoint}`;
 };
 
-export const parseOffers = (offersMocks, offersInputs) => {
+export const parseOffers = (offersExamples, offersInputs) => {
+  const offersExamplesCopy = offersExamples.slice().map((it) => Object.assign({}, it));
   const offersChosen = [...offersInputs].map((input) => input.name.split(`-`)[2]);
   const offersIsAdded = [...offersInputs].map((input) => input.checked);
-  return offersMocks.filter((it) => offersChosen.includes(it.name)).map((it, index) => {
+  return offersExamplesCopy.filter((it) => offersChosen.includes(it.name)).map((it, index) => {
     it.isAdded = offersIsAdded[index];
     return it;
   });

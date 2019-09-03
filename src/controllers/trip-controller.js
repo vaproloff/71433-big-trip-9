@@ -29,6 +29,7 @@ class TripController {
     this._emptyDaysList.removeElement();
     this._sortAndSplitEvents();
     this._renderEvents();
+    document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
   }
 
   _onChangeView() {

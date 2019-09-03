@@ -1,7 +1,7 @@
 import EventCard from '../components/event';
 import EventEditCard from '../components/event-edit';
 import {getFirstCapital, Position, renderElement, parseOffers} from '../utils';
-import {getRandomOffers, OFFERS, TRANSFER_TYPES, getRandomDescription, getRandomImageUrls} from '../data';
+import {getRandomOffers, OFFERS_EXAMPLES, TRANSFER_TYPES, getRandomDescription, getRandomImageUrls} from '../data';
 
 class PointController {
   constructor(eventCardList, fragment, eventData, onDataChange, onChangeView) {
@@ -39,7 +39,7 @@ class PointController {
         timeStart: new Date(formData.get(`event-start-time`)).valueOf(),
         duration: new Date(formData.get(`event-end-time`)).valueOf() - new Date(formData.get(`event-start-time`)).valueOf(),
         price: parseInt(formData.get(`event-price`), 10),
-        offers: parseOffers(OFFERS, this._eventCardEdit.getElement().querySelectorAll(`input.event__offer-checkbox`)),
+        offers: parseOffers(OFFERS_EXAMPLES, this._eventCardEdit.getElement().querySelectorAll(`input.event__offer-checkbox`)),
         isFavorite: formData.get(`event-favorite`)
       };
 

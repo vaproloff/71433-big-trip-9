@@ -77,7 +77,7 @@ export const splitEventsByDay = (events) => {
 export const countTotalTripCost = (events) => {
   return events.reduce((acc, it) => {
     return acc + it.price + it.offers.reduce((sum, element) => {
-      return sum + element.price;
+      return element.isAdded ? sum + element.price : sum;
     }, 0);
   }, 0);
 };

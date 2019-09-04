@@ -10,6 +10,36 @@ class EventEditCard extends EventCard {
     this._isFavorite = event.isFavorite;
   }
 
+  refreshOffers(offers) {
+    const offersContainer = this.getElement().querySelector(`.event__available-offers`);
+    offersContainer.innerHTML = ``;
+    if (offers.length) {
+      const offersContent = `
+        ${offers.map((it) => `
+          <div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name}-1" type="checkbox" name="event-offer-${it.name}" ${it.isAdded ? `checked` : ``}>
+          <label class="event__offer-label" for="event-offer-${it.name}-1">
+            <span class="event__offer-title">${it.title}</span>
+            &plus;
+            &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
+          </label>
+        </div>
+        `).join(``)}`;
+      offersContainer.insertAdjacentHTML(`beforeend`, offersContent);
+      this.getElement().querySelector(`.event__section--offers`).classList.remove(`visually-hidden`);
+    } else {
+      this.getElement().querySelector(`.event__section--offers`).classList.add(`visually-hidden`);
+    }
+  }
+
+  refreshImages(imageUrls) {
+    const imageContainer = this.getElement().querySelector(`.event__photos-tape`);
+    imageContainer.innerHTML = ``;
+    imageContainer.insertAdjacentHTML(`beforeend`, `
+      ${imageUrls.map((it) => `
+        <img class="event__photo" src="${it}" alt="Event photo">`).join(``)}`);
+  }
+
   getTemplate() {
     return `
       <li class="trip-events__item">
@@ -28,7 +58,7 @@ class EventEditCard extends EventCard {
                   
                   ${TRANSFER_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}">
+                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
                     </div>
                   `).join(``)}
@@ -39,7 +69,7 @@ class EventEditCard extends EventCard {
                   
                   ${ACTIVITY_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}">
+                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
                     </div>
                   `).join(``)}

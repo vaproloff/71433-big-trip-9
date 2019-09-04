@@ -40,7 +40,7 @@ class EventCard extends AbstractComponent {
     
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-            ${this._offers.map((it) => `<li class="event__offer">
+            ${this._offers.filter((it) => it.isAdded).map((it) => `<li class="event__offer">
               <span class="event__offer-title">${it.title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${it.price}</span>

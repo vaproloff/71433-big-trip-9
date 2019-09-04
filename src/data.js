@@ -13,7 +13,7 @@ const ACTIVITY_TYPES = [`Check-in`, `Restaurant`, `Sightseeing`];
 const TRANSFER_TYPES = [`Bus`, `Drive`, `Flight`, `Ship`, `Taxi`, `Train`, `Transport`];
 const CITIES = [`Saint Petersburg`, `Chamonix`, `Geneva`, `Amsterdam`, `Moscow`, `Milan`, `Rome`, `Barcelona`, `Madrid`, `Paris`];
 const DESCRIPTION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
-const OFFERS = [
+const OFFERS_EXAMPLES = [
   {
     name: `luggage`,
     title: `Add luggage`,
@@ -41,18 +41,28 @@ const convertDaysToMilliseconds = (days) => days * 24 * 60 * 60 * 1000;
 const convertHoursToMilliseconds = (hours) => hours * 60 * 60 * 1000;
 const roundUpToFiveMinutes = (timeStamp) => Math.trunc(timeStamp / MILLISECONDS_IN_FIVE_MINUTES) * MILLISECONDS_IN_FIVE_MINUTES;
 
+const getRandomOffers = () => {
+  const offersExamplesCopy = OFFERS_EXAMPLES.map((it) => Object.assign({}, it, {isAdded: getRandomBoolean()}));
+  return getRandomlyReducedArray(offersExamplesCopy, Math.round(Math.random() * OFFERS_MAX_NUMBER));
+};
+const getRandomImageUrls = () => {
+  return new Array(Math.ceil(Math.random() * IMAGE_MAX_NUMBER))
+    .fill(``)
+    .map(() => `https://picsum.photos/300/150?r=${Math.random()}`);
+};
+const getRandomDescription = () => {
+  return getRandomlyReducedArray(DESCRIPTION.split(`. `), Math.ceil(Math.random() * DESCRIPTION_MAX_SENTENCES)).join(`. `);
+};
+
 const generateRandomEvent = () => ({
   type: getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
   city: getRandomElementOfArray(CITIES),
-  imagesUrls: new Array(Math.ceil(Math.random() * IMAGE_MAX_NUMBER)).fill(``).map(() => `http://picsum.photos/300/150?r=${Math.random()}`),
-  description: getRandomlyReducedArray(DESCRIPTION.split(`. `), Math.ceil(Math.random() * DESCRIPTION_MAX_SENTENCES)).join(`. `),
+  imagesUrls: getRandomImageUrls(),
+  description: getRandomDescription(),
   timeStart: roundUpToFiveMinutes(Date.now() + convertDaysToMilliseconds(Math.random() * MAX_TRIP_DURATION_DAYS + DAYS_IN_WEEK)),
   duration: roundUpToFiveMinutes(convertHoursToMilliseconds((Math.random() * (MAX_DURATION_IN_HOURS - 1) + 1))),
   price: Math.ceil(Math.random() * MAX_PRICE / 10) * 10,
-  offers: [...new Set(getRandomlyReducedArray(OFFERS, Math.round(Math.random() * OFFERS_MAX_NUMBER)).map((it) => {
-    it.isAdded = true;
-    return it;
-  }))],
+  offers: getRandomOffers(),
   isFavorite: getRandomBoolean()
 });
 
@@ -60,4 +70,4 @@ export const events = new Array(EVENTS_NUMBER).fill(``).map(() => generateRandom
 export const days = [...new Set(events.map((it) => new Date(it.timeStart).setHours(0, 0, 0, 0)))];
 export const menus = [...new Set([`Table`, `Stats`])];
 export const filters = [...new Set([`Everything`, `Future`, `Past`])];
-export {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES};
+export {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES, OFFERS_EXAMPLES, getRandomOffers, getRandomDescription, getRandomImageUrls};

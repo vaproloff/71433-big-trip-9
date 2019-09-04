@@ -86,6 +86,7 @@ class PointController {
     this._startFlatpickr = flatpickr(startTimeInput, {
       altInput: false,
       dateFormat: `m/d/y, H:i`,
+      [`time_24hr`]: true,
       allowInput: true,
       enableTime: true,
       defaultDate: this._eventData.timeStart,
@@ -93,6 +94,7 @@ class PointController {
     this._endFlatpickr = flatpickr(endTimeInput, {
       altInput: false,
       dateFormat: `m/d/y, H:i`,
+      [`time_24hr`]: true,
       allowInput: true,
       enableTime: true,
       defaultDate: this._eventData.timeStart + this._eventData.duration,

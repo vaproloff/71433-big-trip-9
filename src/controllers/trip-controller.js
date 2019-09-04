@@ -6,13 +6,13 @@ import NoEventsMessage from './../components/no-events';
 import PointController from './point-controller';
 
 class TripController {
-  constructor(tripEventsSection, days, events) {
+  constructor(tripEventsSection, events) {
     this._tripEventsSection = tripEventsSection;
     this._tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
-    this._tripInfo = null;
+    this._tripInfo = new TripInfo();
     this._tripSort = new TripSort();
-    this._daysList = new EventDaysList(days);
-    this._emptyDaysList = new EventDaysList(null);
+    this._daysList = new EventDaysList();
+    this._emptyDaysList = new EventDaysList();
     this._events = events;
     this._splittedEventsByDay = splitEventsByDay(this._events);
     this._noEventsMessage = new NoEventsMessage();
@@ -27,11 +27,20 @@ class TripController {
   _onDataChange(newEvent, oldEvent) {
     this._flatpickrs.forEach((it) => it());
     this._events[this._events.indexOf(oldEvent)] = newEvent;
+    this._events.sort((a, b) => a.timeStart - b.timeStart);
     this._daysList.removeElement();
     this._emptyDaysList.removeElement();
+    this._daysList.setNewDays(this._events);
     this._sortAndSplitEvents();
+    this._refreshTripInfo();
     this._renderEvents();
     document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
+  }
+
+  _refreshTripInfo() {
+    const tripStartTime = this._events[0].timeStart;
+    const tripFinishTime = this._events[this._events.length - 1].timeStart + this._events[this._events.length - 1].duration;
+    this._tripInfo.refreshInfo(tripStartTime, tripFinishTime, getTripInfoRoute(this._events));
   }
 
   _onChangeView() {
@@ -88,10 +97,9 @@ class TripController {
 
   init() {
     if (this._events.length) {
-      const tripStartTime = this._events[0].timeStart;
-      const tripFinishTime = this._events[this._events.length - 1].timeStart + this._events[this._events.length - 1].duration;
-      this._tripInfo = new TripInfo(tripStartTime, tripFinishTime, getTripInfoRoute(this._events)).getElement();
-      renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo);
+      this._refreshTripInfo();
+      this._daysList.setNewDays(this._events);
+      renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo.getElement());
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._tripSort.getElement());
       this._tripSort.getElement().addEventListener(`click`, (evt) => this._onTripSortClick(evt));
       this._renderEvents();

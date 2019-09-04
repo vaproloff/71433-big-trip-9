@@ -1,12 +1,13 @@
 import AbstractComponent from './abstract-component';
 import moment from 'moment';
+import {Position, renderElement} from '../utils';
 
 class TripInfo extends AbstractComponent {
-  constructor(startDate, finishDate, route) {
+  constructor() {
     super();
-    this._startDate = startDate;
-    this._finishDate = finishDate;
-    this._route = route;
+    this._startDate = null;
+    this._finishDate = null;
+    this._route = null;
   }
 
   static getTripDatesString(firstDate, lastDate) {
@@ -23,6 +24,15 @@ class TripInfo extends AbstractComponent {
       finish = moment(lastDate).format(`D`);
     }
     return `${start}${finish ? `&nbsp;&mdash;&nbsp;${finish}` : ``}`;
+  }
+
+  refreshInfo(startDate, finishDate, route) {
+    this._startDate = startDate;
+    this._finishDate = finishDate;
+    this._route = route;
+    this.removeElement();
+    const infoSection = document.querySelector(`section.trip-main__trip-info`);
+    renderElement(infoSection, Position.AFTERBEGIN, this.getElement());
   }
 
   getTemplate() {

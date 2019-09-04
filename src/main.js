@@ -1,5 +1,5 @@
 import {Position, renderElement} from './utils';
-import {events, menus, filters, days} from './data';
+import {events, menus, filters} from './data';
 import Menu from './components/menu';
 import TripFilter from './components/filter';
 import TripController from './controllers/trip-controller';
@@ -10,5 +10,5 @@ renderElement(tripControlsHeadings[0], Position.AFTEREND, new Menu([...menus]).g
 renderElement(tripControlsHeadings[1], Position.AFTEREND, new TripFilter([...filters]).getElement());
 
 const tripEventsSection = document.querySelector(`section.trip-events`);
-const tripController = new TripController(tripEventsSection, days, events);
+const tripController = new TripController(tripEventsSection, events);
 tripController.init();

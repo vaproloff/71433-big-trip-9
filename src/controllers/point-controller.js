@@ -71,12 +71,18 @@ class PointController {
       this._eventCardEdit.getElement().querySelector(`.event__destination-description`).innerText = getRandomDescription();
       this._eventCardEdit.refreshImages(getRandomImageUrls());
     };
+    const onStartDateChange = (evt) => {
+      this._endFlatpickr.set(`minDate`, evt.target.value);
+      const newStartTime = moment(evt.target.value, `MM/DD/YY, HH:mm`).valueOf();
+      this._endFlatpickr.setDate(newStartTime + this._eventData.duration);
+    };
 
     this._eventCard.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEventEditClick);
     this._eventCardEdit.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, onEditingCardClose);
     this._eventCardEdit.getElement().querySelector(`form.event--edit`).addEventListener(`submit`, onEditFormSubmit);
     this._eventCardEdit.getElement().querySelector(`.event__type-list`).addEventListener(`click`, onEventTypeClick);
     this._eventCardEdit.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, onDestinationChange);
+    this._eventCardEdit.getElement().querySelector(`input[name="event-start-time"]`).addEventListener(`change`, onStartDateChange);
     renderElement(this._fragment, Position.BEFOREEND, this._eventCard.getElement());
   }
 
@@ -98,7 +104,7 @@ class PointController {
       allowInput: true,
       enableTime: true,
       defaultDate: this._eventData.timeStart + this._eventData.duration,
-      minDate: startTimeInput.value
+      minDate: this._eventData.timeStart
     });
   }
 

@@ -2,9 +2,13 @@ import AbstractComponent from './abstract-component';
 import moment from 'moment';
 
 class EventDaysList extends AbstractComponent {
-  constructor(days) {
+  constructor() {
     super();
-    this._days = days;
+    this._days = null;
+  }
+
+  setNewDays(events) {
+    this._days = [...new Set(events.map((it) => new Date(it.timeStart).setHours(0, 0, 0, 0)))];
   }
 
   getTemplate() {

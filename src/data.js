@@ -67,7 +67,6 @@ const generateRandomEvent = () => ({
 });
 
 export const events = new Array(EVENTS_NUMBER).fill(``).map(() => generateRandomEvent()).sort((a, b) => a.timeStart - b.timeStart);
-export const days = [...new Set(events.map((it) => new Date(it.timeStart).setHours(0, 0, 0, 0)))];
 export const menus = [...new Set([`Table`, `Stats`])];
 export const filters = [...new Set([`Everything`, `Future`, `Past`])];
 export {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES, OFFERS_EXAMPLES, getRandomOffers, getRandomDescription, getRandomImageUrls};

@@ -1,16 +1,17 @@
-import {DateOption, getFormattedDate} from '../utils';
 import AbstractComponent from './abstract-component';
+import moment from 'moment';
+import {Position, renderElement} from '../utils';
 
 class TripInfo extends AbstractComponent {
-  constructor(startDate, finishDate, route) {
+  constructor() {
     super();
-    this._startDate = startDate;
-    this._finishDate = finishDate;
-    this._route = route;
+    this._startDate = null;
+    this._finishDate = null;
+    this._route = null;
   }
 
   static getTripDatesString(firstDate, lastDate) {
-    const start = getFormattedDate(firstDate, DateOption.SHORT_DAY_MONTH);
+    const start = moment(firstDate).format(`MMM D`);
     const startMonth = new Date(firstDate).getMonth();
     const startDay = new Date(firstDate).getDate();
     const finishMonth = new Date(lastDate).getMonth();
@@ -18,11 +19,20 @@ class TripInfo extends AbstractComponent {
     let finish;
 
     if (finishMonth !== startMonth) {
-      finish = getFormattedDate(lastDate, DateOption.SHORT_DAY_MONTH);
+      finish = moment(lastDate).format(`MMM D`);
     } else if (finishDay !== startDay) {
-      finish = getFormattedDate(lastDate, DateOption.SHORT_DAY);
+      finish = moment(lastDate).format(`D`);
     }
     return `${start}${finish ? `&nbsp;&mdash;&nbsp;${finish}` : ``}`;
+  }
+
+  refreshInfo(startDate, finishDate, route) {
+    this._startDate = startDate;
+    this._finishDate = finishDate;
+    this._route = route;
+    this.removeElement();
+    const infoSection = document.querySelector(`section.trip-main__trip-info`);
+    renderElement(infoSection, Position.AFTERBEGIN, this.getElement());
   }
 
   getTemplate() {

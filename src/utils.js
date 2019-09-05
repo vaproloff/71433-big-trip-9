@@ -1,15 +1,10 @@
+import moment from 'moment';
+
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   AFTEREND: `afterend`,
   BEFOREBEGIN: `beforebegin`,
   BEFOREEND: `beforeend`
-};
-
-export const DateOption = {
-  SHORT_TIME: [`en-US`, {hour: `2-digit`, minute: `2-digit`, hour12: false}],
-  FULL_DATE_AND_TIME: [`en-US`, {day: `2-digit`, month: `2-digit`, year: `2-digit`, hour: `2-digit`, minute: `2-digit`, hour12: false}],
-  SHORT_DAY_MONTH: [`en-US`, {day: `numeric`, month: `short`}],
-  SHORT_DAY: [`en-US`, {day: `numeric`}]
 };
 
 export const getRandomElementOfArray = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -21,9 +16,19 @@ export const getRandomlyReducedArray = (arr, newLength) => {
   return arr.slice(0, newLength).map(() => arrCopy.splice(Math.random() * arrCopy.length - 1, 1)[0]);
 };
 
-export const getFormattedDate = (timeStamp, localFormat) => new Date(timeStamp).toLocaleString(...localFormat);
-
-export const getISODate = (timeStamp) => new Date(timeStamp).toISOString();
+export const getFormattedDuration = (duration) => {
+  let formattedDuration = ``;
+  if (moment.duration(duration).days()) {
+    formattedDuration = `${moment.duration(duration).days()}D `;
+  }
+  if (moment.duration(duration).hours()) {
+    formattedDuration = `${formattedDuration}${moment.duration(duration).hours()}H `;
+  }
+  if (moment.duration(duration).minutes()) {
+    formattedDuration = `${formattedDuration}${moment.duration(duration).minutes()}M`;
+  }
+  return formattedDuration;
+};
 
 export const createElement = (html) => {
   const newElement = document.createElement(`div`);

@@ -95,6 +95,19 @@ class TripController {
     }
   }
 
+  hide() {
+    if (this._tripEventsSection.classList.contains(`visually-hidden`)) {
+      return;
+    }
+    this._tripEventsSection.classList.add(`visually-hidden`);
+  }
+
+  show() {
+    if (this._tripEventsSection.classList.contains(`visually-hidden`)) {
+      this._tripEventsSection.classList.remove(`visually-hidden`);
+    }
+  }
+
   init() {
     if (this._events.length) {
       this._refreshTripInfo();

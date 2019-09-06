@@ -1,9 +1,18 @@
-import {countTotalTripCost, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './../utils';
+import {
+  countTotalTripCost, getRandomElementOfArray,
+  getTripInfoRoute,
+  Position,
+  renderElement,
+  splitEventsByDay
+} from './../utils';
 import TripInfo from './../components/trip-info';
 import TripSort from './../components/sort';
 import EventDaysList from './../components/days-list';
 import NoEventsMessage from './../components/no-events';
 import PointController from './point-controller';
+import {ACTIVITY_TYPES, getRandomDescription, getRandomImageUrls, getRandomOffers, TRANSFER_TYPES} from '../data';
+import moment from 'moment';
+import NewEventController from './new-event-controller';
 
 class TripController {
   constructor(tripEventsSection, events) {
@@ -18,6 +27,7 @@ class TripController {
     this._noEventsMessage = new NoEventsMessage();
     this._currentSortingType = `default`;
 
+    this._newEventCreating = false;
     this._subscriptions = [];
     this._flatpickrs = [];
     this._onDataChange = this._onDataChange.bind(this);
@@ -26,7 +36,12 @@ class TripController {
 
   _onDataChange(newEvent, oldEvent) {
     this._flatpickrs.forEach((it) => it());
-    this._events[this._events.indexOf(oldEvent)] = newEvent;
+    if (!oldEvent) {
+      this._events.push(newEvent);
+    } else {
+      const eventIndex = this._events.findIndex((it) => it === oldEvent);
+      this._events[eventIndex] = newEvent;
+    }
     this._events.sort((a, b) => a.timeStart - b.timeStart);
     this._daysList.removeElement();
     this._emptyDaysList.removeElement();
@@ -95,6 +110,26 @@ class TripController {
     }
   }
 
+  _createNewEvent() {
+    if (this._noEventsMessage) {
+      this._noEventsMessage.removeElement();
+    }
+    const defaultEventData = {
+      type: getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
+      city: ``,
+      imagesUrls: getRandomImageUrls(),
+      description: getRandomDescription(),
+      timeStart: moment().valueOf(),
+      duration: moment.duration(1, `hours`).valueOf(),
+      price: 0,
+      offers: getRandomOffers(),
+      isFavorite: false
+    };
+
+    const newEventController = new NewEventController(this._tripEventsSection, defaultEventData, this._onDataChange, this._onChangeView);
+    this._subscriptions.push(newEventController.onNewTaskReset.bind(newEventController));
+  }
+
   hide() {
     if (this._tripEventsSection.classList.contains(`visually-hidden`)) {
       return;
@@ -119,6 +154,11 @@ class TripController {
     } else {
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._noEventsMessage.getElement());
     }
+    document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+      if (!this._newEventCreating) {
+        this._createNewEvent();
+      }
+    });
     document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
   }
 }

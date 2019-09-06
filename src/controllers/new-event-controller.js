@@ -7,12 +7,12 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
 class NewEventController {
-  constructor(tripEventsSection, newEventData, onDataChange, onChangeView) {
+  constructor(tripEventsSection, newEventData, onDataChange, onCreateNewTask) {
     this._tripEventsSection = tripEventsSection;
     this._newEventData = newEventData;
     this._eventNewCard = new EventNewCard(newEventData);
     this._onDataChange = onDataChange;
-    this._onChangeView = onChangeView;
+    this._onCreateNewTask = onCreateNewTask;
 
     this._eventNewCard.getElement().querySelector(`.event__input--destination`).required = true;
 
@@ -21,7 +21,7 @@ class NewEventController {
   }
 
   init() {
-    this._onChangeView();
+    this._onCreateNewTask();
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -108,6 +108,7 @@ class NewEventController {
   onNewTaskReset() {
     this._clearFlatpickr();
     this._eventNewCard.removeElement();
+    this._onDataChange(null, null);
   }
 
   _clearFlatpickr() {

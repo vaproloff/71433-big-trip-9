@@ -42,6 +42,7 @@ class TripController {
       this._flatpickrs.forEach((it) => it());
       if (!oldEvent) {
         this._events.push(newEvent);
+        this.toggleAbilityToCreateNewTask(true);
       } else if (!newEvent) {
         const eventIndex = this._events.findIndex((it) => it === oldEvent);
         this._events.splice(eventIndex, 1);

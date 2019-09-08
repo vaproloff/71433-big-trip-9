@@ -27,12 +27,14 @@ class TripInfo extends AbstractComponent {
   }
 
   refreshInfo(startDate, finishDate, route) {
-    this._startDate = startDate;
-    this._finishDate = finishDate;
-    this._route = route;
     this.removeElement();
-    const infoSection = document.querySelector(`section.trip-main__trip-info`);
-    renderElement(infoSection, Position.AFTERBEGIN, this.getElement());
+    if (startDate) {
+      this._startDate = startDate;
+      this._finishDate = finishDate;
+      this._route = route;
+      const infoSection = document.querySelector(`section.trip-main__trip-info`);
+      renderElement(infoSection, Position.AFTERBEGIN, this.getElement());
+    }
   }
 
   getTemplate() {

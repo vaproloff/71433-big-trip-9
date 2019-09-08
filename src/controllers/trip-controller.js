@@ -1,9 +1,18 @@
-import {countTotalTripCost, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './../utils';
+import {
+  countTotalTripCost, getRandomElementOfArray,
+  getTripInfoRoute,
+  Position,
+  renderElement,
+  splitEventsByDay
+} from './../utils';
 import TripInfo from './../components/trip-info';
 import TripSort from './../components/sort';
 import EventDaysList from './../components/days-list';
 import NoEventsMessage from './../components/no-events';
 import PointController from './point-controller';
+import {ACTIVITY_TYPES, getRandomDescription, getRandomImageUrls, getRandomOffers, TRANSFER_TYPES} from '../data';
+import moment from 'moment';
+import NewEventController from './new-event-controller';
 
 class TripController {
   constructor(tripEventsSection, events) {
@@ -18,32 +27,59 @@ class TripController {
     this._noEventsMessage = new NoEventsMessage();
     this._currentSortingType = `default`;
 
+    this._ableToCreateEvent = true;
     this._subscriptions = [];
     this._flatpickrs = [];
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
+    this._onCreateNewTask = this._onCreateNewTask.bind(this);
   }
 
   _onDataChange(newEvent, oldEvent) {
-    this._flatpickrs.forEach((it) => it());
-    this._events[this._events.indexOf(oldEvent)] = newEvent;
-    this._events.sort((a, b) => a.timeStart - b.timeStart);
-    this._daysList.removeElement();
-    this._emptyDaysList.removeElement();
-    this._daysList.setNewDays(this._events);
-    this._sortAndSplitEvents();
-    this._refreshTripInfo();
-    this._renderEvents();
-    document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
+    if (!oldEvent && !newEvent) {
+      this.toggleAbilityToCreateNewTask(true);
+    } else {
+      this._flatpickrs.forEach((it) => it());
+      if (!oldEvent) {
+        this._events.push(newEvent);
+        this.toggleAbilityToCreateNewTask(true);
+      } else if (!newEvent) {
+        const eventIndex = this._events.findIndex((it) => it === oldEvent);
+        this._events.splice(eventIndex, 1);
+      } else {
+        const eventIndex = this._events.findIndex((it) => it === oldEvent);
+        this._events[eventIndex] = newEvent;
+      }
+      this._events.sort((a, b) => a.timeStart - b.timeStart);
+      this._daysList.removeElement();
+      this._emptyDaysList.removeElement();
+      this._daysList.setNewDays(this._events);
+      this._sortAndSplitEvents();
+      this._refreshTripInfo();
+      this._renderEvents();
+      document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
+    }
+    this._checkEventsAvailable();
   }
 
   _refreshTripInfo() {
-    const tripStartTime = this._events[0].timeStart;
-    const tripFinishTime = this._events[this._events.length - 1].timeStart + this._events[this._events.length - 1].duration;
-    this._tripInfo.refreshInfo(tripStartTime, tripFinishTime, getTripInfoRoute(this._events));
+    if (this._events.length) {
+      const tripStartTime = this._events[0].timeStart;
+      const tripFinishTime = this._events[this._events.length - 1].timeStart + this._events[this._events.length - 1].duration;
+      this._tripInfo.refreshInfo(tripStartTime, tripFinishTime, getTripInfoRoute(this._events));
+    } else {
+      this._tripInfo.refreshInfo();
+    }
   }
 
   _onChangeView() {
+    if (this._newEventController) {
+      this._newEventController.onNewTaskReset();
+    }
+    this._subscriptions.forEach((it) => it());
+  }
+
+  _onCreateNewTask() {
     this._subscriptions.forEach((it) => it());
   }
 
@@ -95,17 +131,72 @@ class TripController {
     }
   }
 
+  _createNewEvent() {
+    if (this._noEventsMessage) {
+      this._noEventsMessage.removeElement();
+    }
+    this.toggleAbilityToCreateNewTask(false);
+
+    const defaultEventData = {
+      type: getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
+      city: ``,
+      imagesUrls: getRandomImageUrls(),
+      description: getRandomDescription(),
+      timeStart: moment().valueOf(),
+      duration: moment.duration(1, `hours`).valueOf(),
+      price: 0,
+      offers: getRandomOffers(),
+      isFavorite: false
+    };
+
+    this._newEventController = new NewEventController(this._tripEventsSection, defaultEventData, this._onDataChange, this._onCreateNewTask);
+  }
+
+  hide() {
+    if (this._tripEventsSection.classList.contains(`visually-hidden`)) {
+      return;
+    }
+    this._tripEventsSection.classList.add(`visually-hidden`);
+  }
+
+  show() {
+    if (this._tripEventsSection.classList.contains(`visually-hidden`)) {
+      this._tripEventsSection.classList.remove(`visually-hidden`);
+    }
+  }
+
+  toggleAbilityToCreateNewTask(ability) {
+    if (this._ableToCreateEvent !== ability) {
+      this._ableToCreateEvent = ability;
+    }
+  }
+
+  _checkEventsAvailable() {
+    if (!this._events.length) {
+      this._tripSort.removeElement();
+      renderElement(this._tripEventsSection, Position.BEFOREEND, this._noEventsMessage.getElement());
+    } else if (!this._tripEventsSection.querySelector(`.trip-events__trip-sort`)) {
+      renderElement(this._tripEventsSection, Position.AFTERBEGIN, this._tripSort.getElement());
+      this._tripSort.getElement().addEventListener(`click`, (evt) => this._onTripSortClick(evt));
+    }
+  }
+
   init() {
     if (this._events.length) {
       this._refreshTripInfo();
       this._daysList.setNewDays(this._events);
       renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo.getElement());
-      renderElement(this._tripEventsSection, Position.BEFOREEND, this._tripSort.getElement());
+      renderElement(this._tripEventsSection, Position.AFTERBEGIN, this._tripSort.getElement());
       this._tripSort.getElement().addEventListener(`click`, (evt) => this._onTripSortClick(evt));
       this._renderEvents();
     } else {
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._noEventsMessage.getElement());
     }
+    document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+      if (this._ableToCreateEvent) {
+        this._createNewEvent();
+      }
+    });
     document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
   }
 }

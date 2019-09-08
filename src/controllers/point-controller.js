@@ -83,6 +83,10 @@ class PointController {
     this._eventCardEdit.getElement().querySelector(`.event__type-list`).addEventListener(`click`, onEventTypeClick);
     this._eventCardEdit.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, onDestinationChange);
     this._eventCardEdit.getElement().querySelector(`input[name="event-start-time"]`).addEventListener(`change`, onStartDateChange);
+    this._eventCardEdit.getElement().querySelector(`form.event--edit`).addEventListener(`reset`, () => {
+      this._onDataChange(null, this._eventData);
+    });
+
     renderElement(this._fragment, Position.BEFOREEND, this._eventCard.getElement());
   }
 

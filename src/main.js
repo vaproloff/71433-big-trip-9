@@ -2,9 +2,9 @@ import {Position, renderElement} from './utils';
 import Menu from './components/menu';
 import TripFilter from './components/filter';
 import TripController from './controllers/trip-controller';
-import Statistics from './components/statistics';
 import ScreenController from './controllers/screen-controller';
 import API from './api';
+import StatController from './controllers/stat-controller';
 
 const menus = [...new Set([`Table`, `Stats`])];
 const filters = [...new Set([`Everything`, `Future`, `Past`])];
@@ -30,14 +30,12 @@ api.getOffers().then((offers) => {
 
     api.getEvents().then((events) => {
       const tripEventsSection = document.querySelector(`section.trip-events`);
-      const tripController = new TripController(tripEventsSection, events, api);
+      const statController = new StatController(tripEventsSection, events);
+
+      const tripController = new TripController(tripEventsSection, events, api, statController.refreshCharts.bind(statController));
       tripController.init();
 
-      const statistics = new Statistics();
-      renderElement(tripEventsSection, Position.AFTEREND, statistics.getElement());
-      statistics.hide();
-
-      const screenController = new ScreenController(menu, tripController, statistics);
+      const screenController = new ScreenController(menu, tripController, statController);
       screenController.init();
     });
   });

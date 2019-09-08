@@ -10,7 +10,7 @@ import NewEventController from './new-event-controller';
 import EventAdapter from '../adapter';
 
 class TripController {
-  constructor(tripEventsSection, events, api) {
+  constructor(tripEventsSection, events, api, refreshCharts) {
     this._api = api;
     this._tripEventsSection = tripEventsSection;
     this._tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
@@ -22,6 +22,7 @@ class TripController {
     this._splittedEventsByDay = splitEventsByDay(this._events);
     this._noEventsMessage = new NoEventsMessage();
     this._currentSortingType = `default`;
+    this._refreshCharts = refreshCharts;
 
     this._ableToCreateEvent = true;
     this._subscriptions = [];
@@ -72,6 +73,7 @@ class TripController {
     this._sortAndSplitEvents();
     this._daysList.setNewDays(this._events);
     this._refreshTripInfo();
+    this._refreshCharts(this._events);
     this._renderEvents();
     document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
     this._checkEventsAvailable();

@@ -1,11 +1,12 @@
 import EventCard from './event';
-import {ACTIVITY_TYPES, TRANSFER_TYPES, CITIES} from '../data';
+import {ACTIVITY_TYPES, TRANSFER_TYPES, DESTINATIONS} from '../main';
 import moment from 'moment';
 
 class EventNewCard extends EventCard {
   constructor(eventData) {
     super(eventData);
   }
+
   getTemplate() {
     return `
       <form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -48,7 +49,7 @@ class EventNewCard extends EventCard {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._city}" list="destination-list-1">
             <datalist id="destination-list-1">
-                ${CITIES.map((it) => `<option value="${it}"></option>
+                ${DESTINATIONS.map((it) => `<option value="${it.name}"></option>
                 `).join(``)}
               </datalist>
           </div>

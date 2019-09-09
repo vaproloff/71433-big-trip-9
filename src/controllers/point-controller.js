@@ -1,11 +1,11 @@
 import EventCard from '../components/event';
 import EventEditCard from '../components/event-edit';
-import {getFirstCapital, Position, renderElement, parseOffers} from '../utils';
-import {getRandomOffers, OFFERS_EXAMPLES, TRANSFER_TYPES, getRandomDescription, getRandomImageUrls} from '../data';
+import {getFirstCapital, Position, renderElement, parseOffers, parseImages} from '../utils';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 import moment from 'moment';
+import {TRANSFER_TYPES, DESTINATIONS, OFFERS} from '../main';
 
 class PointController {
   constructor(eventCardList, fragment, eventData, onDataChange, onChangeView) {
@@ -28,34 +28,38 @@ class PointController {
         onEditingCardClose();
       }
     };
+
     const onEditingCardClose = () => {
       this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
+
     const onEditFormSubmit = (evt) => {
       evt.preventDefault();
-      this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
       const formData = new FormData(this._eventCardEdit.getElement().querySelector(`form.event--edit`));
       const newEventData = {
-        type: getFirstCapital(formData.get(`event-type`)),
+        type: formData.get(`event-type`),
         city: formData.get(`event-destination`),
-        imagesUrls: [...this._eventCardEdit.getElement().querySelectorAll(`img.event__photo`)].map((it) => it.src),
+        imagesUrls: parseImages(this._eventCardEdit.getElement().querySelectorAll(`img.event__photo`)),
         description: this._eventCardEdit.getElement().querySelector(`.event__destination-description`).innerText,
         timeStart: moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
         duration: moment(formData.get(`event-end-time`), `MM/DD/YY, HH:mm`).valueOf() - moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
         price: parseInt(formData.get(`event-price`), 10),
-        offers: parseOffers(OFFERS_EXAMPLES, this._eventCardEdit.getElement().querySelectorAll(`input.event__offer-checkbox`)),
+        offers: parseOffers(this._eventCardEdit.getElement().querySelectorAll(`.event__offer-label`)),
         isFavorite: formData.get(`event-favorite`)
       };
+      this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
 
       this._onDataChange(newEventData, this._eventData);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
+
     const onEventEditClick = () => {
       this._onChangeView();
       this._eventCardList.replaceChild(this._eventCardEdit.getElement(), this._eventCard.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
     };
+
     const onEventTypeClick = (evt) => {
       if (evt.target.tagName === `INPUT` && evt.target.value !== this._eventTypeChosen) {
         this._eventTypeChosen = evt.target.value;
@@ -64,13 +68,28 @@ class PointController {
         const eventTypeChosen = getFirstCapital(evt.target.value);
         eventTypeIcon.src = `img/icons/${eventTypeChosen.toLowerCase()}.png`;
         eventTypeInput.innerText = `${eventTypeChosen} ${TRANSFER_TYPES.includes(eventTypeChosen) ? `to` : `in`}`;
-        this._eventCardEdit.refreshOffers(getRandomOffers());
+        if (OFFERS.map((it) => it.type).includes(eventTypeChosen.toLowerCase())) {
+          this._eventCardEdit.refreshOffers(OFFERS.find((offer) => offer.type === eventTypeChosen.toLowerCase()).offers);
+        } else {
+          this._eventCardEdit.refreshOffers();
+        }
       }
     };
-    const onDestinationChange = () => {
-      this._eventCardEdit.getElement().querySelector(`.event__destination-description`).innerText = getRandomDescription();
-      this._eventCardEdit.refreshImages(getRandomImageUrls());
+
+    const onDestinationChange = (evt) => {
+      const cityChosen = evt.target.value;
+      const cityIndex = DESTINATIONS.findIndex((it) => it.name === cityChosen);
+      if (cityIndex >= 0) {
+        this._eventCardEdit.refreshDescription(DESTINATIONS[cityIndex].description);
+        this._eventCardEdit.refreshImages(DESTINATIONS[cityIndex].pictures);
+        this._eventCardEdit.getElement().querySelector(`.event__section--destination`).classList.remove(`visually-hidden`);
+      } else {
+        this._eventCardEdit.getElement().querySelector(`.event__section--destination`).classList.add(`visually-hidden`);
+        this._eventCardEdit.refreshDescription();
+        this._eventCardEdit.refreshImages();
+      }
     };
+
     const onStartDateChange = (evt) => {
       this._endFlatpickr.set(`minDate`, evt.target.value);
       const newStartTime = moment(evt.target.value, `MM/DD/YY, HH:mm`).valueOf();

@@ -1,16 +1,10 @@
-import {
-  countTotalTripCost, getRandomElementOfArray,
-  getTripInfoRoute,
-  Position,
-  renderElement,
-  splitEventsByDay
-} from './../utils';
+import {countTotalTripCost, getRandomElementOfArray, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './../utils';
 import TripInfo from './../components/trip-info';
 import TripSort from './../components/sort';
 import EventDaysList from './../components/days-list';
 import NoEventsMessage from './../components/no-events';
 import PointController from './point-controller';
-import {ACTIVITY_TYPES, getRandomDescription, getRandomImageUrls, getRandomOffers, TRANSFER_TYPES} from '../data';
+import {ACTIVITY_TYPES, TRANSFER_TYPES} from '../main';
 import moment from 'moment';
 import NewEventController from './new-event-controller';
 
@@ -140,12 +134,12 @@ class TripController {
     const defaultEventData = {
       type: getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
       city: ``,
-      imagesUrls: getRandomImageUrls(),
-      description: getRandomDescription(),
+      imagesUrls: [],
+      description: ``,
       timeStart: moment().valueOf(),
       duration: moment.duration(1, `hours`).valueOf(),
       price: 0,
-      offers: getRandomOffers(),
+      offers: [],
       isFavorite: false
     };
 

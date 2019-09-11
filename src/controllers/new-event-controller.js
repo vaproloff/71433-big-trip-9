@@ -34,7 +34,7 @@ class NewEventController {
       const formData = new FormData(this._eventNewCard.getElement());
       this._newEventData.price = parseInt(formData.get(`event-price`), 10);
       const savedEventData = {
-        type: getFirstCapital(formData.get(`event-type`)),
+        type: formData.get(`event-type`).toLowerCase(),
         city: formData.get(`event-destination`),
         imagesUrls: this._newEventData.imagesUrls,
         description: this._newEventData.description,
@@ -46,7 +46,7 @@ class NewEventController {
       };
 
       this._clearFlatpickr();
-      this._onDataChange(savedEventData, null);
+      this._onDataChange(`create`, savedEventData);
       document.removeEventListener(`keydown`, onEscKeyDown);
       this._eventNewCard.removeElement();
     };
@@ -60,7 +60,14 @@ class NewEventController {
         eventTypeInput.innerText = `${getFirstCapital(this._newEventData.type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._newEventData.type)) ? `to` : `in`}`;
 
         if (OFFERS.map((it) => it.type).includes(this._newEventData.type.toLowerCase())) {
-          this._newEventData.offers = OFFERS.find((offer) => offer.type === this._newEventData.type.toLowerCase()).offers;
+          this._newEventData.offers = OFFERS.find((offer) => offer.type === this._newEventData.type.toLowerCase()).offers
+            .map((it) => {
+              return {
+                title: it.name,
+                price: it.price,
+                accepted: false
+              };
+            });
         }
       }
     };
@@ -68,10 +75,8 @@ class NewEventController {
     const onDestinationChange = (evt) => {
       this._newEventData.city = evt.target.value;
       const cityIndex = DESTINATIONS.findIndex((it) => it.name === this._newEventData.city);
-      if (cityIndex >= 0) {
-        this._newEventData.description = DESTINATIONS[cityIndex].description;
-        this._newEventData.imagesUrls = DESTINATIONS[cityIndex].pictures;
-      }
+      this._newEventData.description = DESTINATIONS[cityIndex].description;
+      this._newEventData.imagesUrls = DESTINATIONS[cityIndex].pictures;
     };
 
     const onStartDateChange = (evt) => {

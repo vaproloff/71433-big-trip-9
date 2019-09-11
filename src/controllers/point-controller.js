@@ -38,6 +38,7 @@ class PointController {
       evt.preventDefault();
       const formData = new FormData(this._eventCardEdit.getElement().querySelector(`form.event--edit`));
       const newEventData = {
+        id: this._eventData.id,
         type: formData.get(`event-type`),
         city: formData.get(`event-destination`),
         imagesUrls: parseImages(this._eventCardEdit.getElement().querySelectorAll(`img.event__photo`)),
@@ -46,11 +47,11 @@ class PointController {
         duration: moment(formData.get(`event-end-time`), `MM/DD/YY, HH:mm`).valueOf() - moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
         price: parseInt(formData.get(`event-price`), 10),
         offers: parseOffers(this._eventCardEdit.getElement().querySelectorAll(`.event__offer-label`)),
-        isFavorite: formData.get(`event-favorite`)
+        isFavorite: !!formData.get(`event-favorite`)
       };
       this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
 
-      this._onDataChange(newEventData, this._eventData);
+      this._onDataChange(`update`, newEventData);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
@@ -79,15 +80,9 @@ class PointController {
     const onDestinationChange = (evt) => {
       const cityChosen = evt.target.value;
       const cityIndex = DESTINATIONS.findIndex((it) => it.name === cityChosen);
-      if (cityIndex >= 0) {
-        this._eventCardEdit.refreshDescription(DESTINATIONS[cityIndex].description);
-        this._eventCardEdit.refreshImages(DESTINATIONS[cityIndex].pictures);
-        this._eventCardEdit.getElement().querySelector(`.event__section--destination`).classList.remove(`visually-hidden`);
-      } else {
-        this._eventCardEdit.getElement().querySelector(`.event__section--destination`).classList.add(`visually-hidden`);
-        this._eventCardEdit.refreshDescription();
-        this._eventCardEdit.refreshImages();
-      }
+      this._eventCardEdit.refreshDescription(DESTINATIONS[cityIndex].description);
+      this._eventCardEdit.refreshImages(DESTINATIONS[cityIndex].pictures);
+      this._eventCardEdit.getElement().querySelector(`.event__section--destination`).classList.remove(`visually-hidden`);
     };
 
     const onStartDateChange = (evt) => {
@@ -103,7 +98,7 @@ class PointController {
     this._eventCardEdit.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, onDestinationChange);
     this._eventCardEdit.getElement().querySelector(`input[name="event-start-time"]`).addEventListener(`change`, onStartDateChange);
     this._eventCardEdit.getElement().querySelector(`form.event--edit`).addEventListener(`reset`, () => {
-      this._onDataChange(null, this._eventData);
+      this._onDataChange(`delete`, this._eventData);
     });
 
     renderElement(this._fragment, Position.BEFOREEND, this._eventCard.getElement());

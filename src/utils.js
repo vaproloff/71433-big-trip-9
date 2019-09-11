@@ -94,7 +94,7 @@ export const parseOffers = (offersInputLabels) => {
   return [...offersInputLabels].map((it) => {
     return {
       title: it.firstElementChild.textContent,
-      price: it.lastElementChild.textContent,
+      price: parseInt(it.lastElementChild.textContent, 10),
       accepted: it.control.checked
     };
   });

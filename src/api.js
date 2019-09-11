@@ -1,3 +1,5 @@
+import EventAdapter from './adapter';
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -35,17 +37,31 @@ const API = class {
 
   getEvents() {
     return this._load({url: `points`})
-      .then(toJSON);
+      .then(toJSON)
+      .then(EventAdapter.parseEvents);
   }
 
-  // createTask({task}) {
-  // }
-  //
-  // updateTask({id, data}) {
-  // }
-  //
-  // deleteTask({id}) {
-  // }
+  createTask(data) {
+    return this._load({
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    });
+  }
+
+  updateTask(id, data) {
+    return this._load({
+      url: `points/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    });
+  }
+
+  deleteTask(id) {
+    return this._load({url: `points/${id}`, method: Method.DELETE});
+  }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

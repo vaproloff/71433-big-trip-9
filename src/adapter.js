@@ -12,12 +12,29 @@ class EventAdapter {
     this.isFavorite = Boolean(data[`is_favorite`]);
   }
 
-  static parseTask(data) {
+  static parseEvent(data) {
     return new EventAdapter(data);
   }
 
-  static parseTasks(data) {
-    return data.map(EventAdapter.parseTask);
+  static parseEvents(data) {
+    return data.map(EventAdapter.parseEvent);
+  }
+
+  static toRAW(data) {
+    return {
+      'id': data.id ? data.id : null,
+      'date_from': data.timeStart,
+      'date_to': data.timeStart + data.duration,
+      'type': data.type,
+      'offers': data.offers,
+      'destination': {
+        'name': data.city,
+        'description': data.description,
+        'pictures': data.imagesUrls
+      },
+      'base_price': data.price,
+      'is_favorite': data.isFavorite
+    };
   }
 }
 

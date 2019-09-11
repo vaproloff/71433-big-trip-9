@@ -7,9 +7,11 @@ import PointController from './point-controller';
 import {ACTIVITY_TYPES, TRANSFER_TYPES} from '../main';
 import moment from 'moment';
 import NewEventController from './new-event-controller';
+import EventAdapter from '../adapter';
 
 class TripController {
-  constructor(tripEventsSection, events) {
+  constructor(tripEventsSection, events, api) {
+    this._api = api;
     this._tripEventsSection = tripEventsSection;
     this._tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
     this._tripInfo = new TripInfo();
@@ -29,30 +31,49 @@ class TripController {
     this._onCreateNewTask = this._onCreateNewTask.bind(this);
   }
 
-  _onDataChange(newEvent, oldEvent) {
-    if (!oldEvent && !newEvent) {
-      this.toggleAbilityToCreateNewTask(true);
-    } else {
-      this._flatpickrs.forEach((it) => it());
-      if (!oldEvent) {
-        this._events.push(newEvent);
+  _onDataChange(action, eventData) {
+    switch (action) {
+      case `delete`:
+        this._api.deleteTask(eventData.id).then(() => {
+          const eventIndex = this._events.findIndex((it) => it === eventData);
+          this._events.splice(eventIndex, 1);
+          this._reRenderBoard();
+          this.toggleAbilityToCreateNewTask(true);
+        });
+        break;
+      case `update`:
+        this._api.updateTask(eventData.id, EventAdapter.toRAW(eventData))
+          .then(() => this._api.getEvents())
+          .then((events) => {
+            this._events = events.sort((a, b) => a.timeStart - b.timeStart);
+            this._reRenderBoard();
+            this.toggleAbilityToCreateNewTask(true);
+          });
+        break;
+      case `create`:
+        this._api.createTask(EventAdapter.toRAW(eventData))
+          .then(() => this._api.getEvents())
+          .then((events) => {
+            this._events = events.sort((a, b) => a.timeStart - b.timeStart);
+            this._reRenderBoard();
+            this.toggleAbilityToCreateNewTask(true);
+          });
+        break;
+      default:
         this.toggleAbilityToCreateNewTask(true);
-      } else if (!newEvent) {
-        const eventIndex = this._events.findIndex((it) => it === oldEvent);
-        this._events.splice(eventIndex, 1);
-      } else {
-        const eventIndex = this._events.findIndex((it) => it === oldEvent);
-        this._events[eventIndex] = newEvent;
-      }
-      this._events.sort((a, b) => a.timeStart - b.timeStart);
-      this._daysList.removeElement();
-      this._emptyDaysList.removeElement();
-      this._daysList.setNewDays(this._events);
-      this._sortAndSplitEvents();
-      this._refreshTripInfo();
-      this._renderEvents();
-      document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
+        break;
     }
+  }
+
+  _reRenderBoard() {
+    this._flatpickrs.forEach((it) => it());
+    this._daysList.removeElement();
+    this._emptyDaysList.removeElement();
+    this._sortAndSplitEvents();
+    this._daysList.setNewDays(this._events);
+    this._refreshTripInfo();
+    this._renderEvents();
+    document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
     this._checkEventsAvailable();
   }
 
@@ -117,6 +138,7 @@ class TripController {
 
   _onTripSortClick(evt) {
     if (evt.target.tagName === `INPUT` && evt.target.dataset.sortType !== this._currentSortingType) {
+      this._flatpickrs.forEach((it) => it());
       this._daysList.removeElement();
       this._emptyDaysList.removeElement();
       this._currentSortingType = evt.target.dataset.sortType;

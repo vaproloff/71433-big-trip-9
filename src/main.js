@@ -31,7 +31,7 @@ api.getOffers().then((offers) => {
 
     api.getEvents().then((events) => {
       const tripEventsSection = document.querySelector(`section.trip-events`);
-      const tripController = new TripController(tripEventsSection, EventAdapter.parseTasks(events));
+      const tripController = new TripController(tripEventsSection, events, api);
       tripController.init();
 
       const statistics = new Statistics();

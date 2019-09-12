@@ -1,10 +1,10 @@
 import {getFirstCapital, Position, renderElement} from '../utils';
 import moment from 'moment';
 import EventNewCard from '../components/new-event';
-import {TRANSFER_TYPES} from '../data';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
+import {TRANSFER_TYPES, DESTINATIONS, OFFERS} from '../main';
 
 class NewEventController {
   constructor(tripEventsSection, newEventData, onDataChange, onCreateNewTask) {
@@ -32,8 +32,9 @@ class NewEventController {
     const onNewTaskSubmit = (evt) => {
       evt.preventDefault();
       const formData = new FormData(this._eventNewCard.getElement());
+      this._newEventData.price = parseInt(formData.get(`event-price`), 10);
       const savedEventData = {
-        type: getFirstCapital(formData.get(`event-type`)),
+        type: formData.get(`event-type`).toLowerCase(),
         city: formData.get(`event-destination`),
         imagesUrls: this._newEventData.imagesUrls,
         description: this._newEventData.description,
@@ -45,20 +46,37 @@ class NewEventController {
       };
 
       this._clearFlatpickr();
-      this._onDataChange(savedEventData, null);
+      this._onDataChange(`create`, savedEventData);
       document.removeEventListener(`keydown`, onEscKeyDown);
       this._eventNewCard.removeElement();
     };
 
     const onEventTypeClick = (evt) => {
-      if (evt.target.tagName === `INPUT` && evt.target.value !== this._eventTypeChosen) {
-        this._eventTypeChosen = evt.target.value;
+      if (evt.target.tagName === `INPUT` && evt.target.value !== this._newEventData.type) {
+        this._newEventData.type = evt.target.value;
         const eventTypeInput = this._eventNewCard.getElement().querySelector(`.event__type-output`);
         const eventTypeIcon = this._eventNewCard.getElement().querySelector(`.event__type-icon`);
-        const eventTypeChosen = getFirstCapital(evt.target.value);
-        eventTypeIcon.src = `img/icons/${eventTypeChosen.toLowerCase()}.png`;
-        eventTypeInput.innerText = `${eventTypeChosen} ${TRANSFER_TYPES.includes(eventTypeChosen) ? `to` : `in`}`;
+        eventTypeIcon.src = `img/icons/${this._newEventData.type.toLowerCase()}.png`;
+        eventTypeInput.innerText = `${getFirstCapital(this._newEventData.type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._newEventData.type)) ? `to` : `in`}`;
+
+        if (OFFERS.map((it) => it.type).includes(this._newEventData.type.toLowerCase())) {
+          this._newEventData.offers = OFFERS.find((offer) => offer.type === this._newEventData.type.toLowerCase()).offers
+            .map((it) => {
+              return {
+                title: it.name,
+                price: it.price,
+                accepted: false
+              };
+            });
+        }
       }
+    };
+
+    const onDestinationChange = (evt) => {
+      this._newEventData.city = evt.target.value;
+      const cityIndex = DESTINATIONS.findIndex((it) => it.name === this._newEventData.city);
+      this._newEventData.description = DESTINATIONS[cityIndex].description;
+      this._newEventData.imagesUrls = DESTINATIONS[cityIndex].pictures;
     };
 
     const onStartDateChange = (evt) => {
@@ -68,6 +86,7 @@ class NewEventController {
     };
 
     this._eventNewCard.getElement().querySelector(`.event__type-list`).addEventListener(`click`, onEventTypeClick);
+    this._eventNewCard.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, onDestinationChange);
     this._eventNewCard.getElement().querySelector(`input[name="event-start-time"]`).addEventListener(`change`, onStartDateChange);
     this._eventNewCard.getElement().addEventListener(`submit`, onNewTaskSubmit);
     this._eventNewCard.getElement().addEventListener(`reset`, () => {

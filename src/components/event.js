@@ -1,11 +1,12 @@
 import AbstractComponent from './abstract-component';
-import {TRANSFER_TYPES} from '../data';
-import {getFormattedDuration} from '../utils';
+import {TRANSFER_TYPES} from '../main';
+import {getFirstCapital, getFormattedDuration} from '../utils';
 import moment from 'moment';
 
 class EventCard extends AbstractComponent {
   constructor(event) {
     super();
+    this._id = event.id;
     this._type = event.type;
     this._city = event.city;
     this._timeStart = event.timeStart;
@@ -19,9 +20,9 @@ class EventCard extends AbstractComponent {
       <li class="trip-events__item">
         <div class="event">
           <div class="event__type">
-            <img class="event__type-icon" width="42" height="42" src="img/icons/${this._type.toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="42" height="42" src="img/icons/${this._type.toLowerCase()}.png" alt="${getFirstCapital(this._type)}">
           </div>
-          <h3 class="event__title">${this._type} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`} ${this._city}</h3>
+          <h3 class="event__title">${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._type)) ? `to` : `in`} ${this._city}</h3>
     
           <div class="event__schedule">
             <p class="event__time">
@@ -38,7 +39,7 @@ class EventCard extends AbstractComponent {
     
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-            ${this._offers.filter((it) => it.isAdded).map((it) => `<li class="event__offer">
+            ${this._offers.filter((it) => it.accepted).map((it) => `<li class="event__offer">
               <span class="event__offer-title">${it.title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${it.price}</span>

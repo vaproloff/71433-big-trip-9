@@ -1,6 +1,7 @@
 import EventCard from './event';
-import {CITIES, TRANSFER_TYPES, ACTIVITY_TYPES} from '../data';
+import {TRANSFER_TYPES, ACTIVITY_TYPES, DESTINATIONS} from '../main';
 import moment from 'moment';
+import {getFirstCapital} from '../utils';
 
 class EventEditCard extends EventCard {
   constructor(event) {
@@ -10,16 +11,16 @@ class EventEditCard extends EventCard {
     this._isFavorite = event.isFavorite;
   }
 
-  refreshOffers(offers) {
+  refreshOffers(offers = []) {
     const offersContainer = this.getElement().querySelector(`.event__available-offers`);
     offersContainer.innerHTML = ``;
     if (offers.length) {
       const offersContent = `
         ${offers.map((it) => `
           <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name}-1" type="checkbox" name="event-offer-${it.name}" ${it.isAdded ? `checked` : ``}>
-          <label class="event__offer-label" for="event-offer-${it.name}-1">
-            <span class="event__offer-title">${it.title}</span>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name.toLowerCase().split(` `).join(`-`)}-${this._id}" type="checkbox" name="event-offer-${it.name.toLowerCase().split(` `).join(`-`)}">
+          <label class="event__offer-label" for="event-offer-${it.name.toLowerCase().split(` `).join(`-`)}-${this._id}">
+            <span class="event__offer-title">${it.name}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
           </label>
@@ -32,12 +33,19 @@ class EventEditCard extends EventCard {
     }
   }
 
-  refreshImages(imageUrls) {
+  refreshDescription(description = ``) {
+    this.getElement().querySelector(`.event__destination-description`).innerText = description;
+  }
+
+  refreshImages(imageUrls = []) {
     const imageContainer = this.getElement().querySelector(`.event__photos-tape`);
     imageContainer.innerHTML = ``;
-    imageContainer.insertAdjacentHTML(`beforeend`, `
+    if (imageUrls.length) {
+      imageContainer.insertAdjacentHTML(`beforeend`, `
       ${imageUrls.map((it) => `
-        <img class="event__photo" src="${it}" alt="Event photo">`).join(``)}`);
+        <img class="event__photo" src="${it.src}" alt="${it.description}">`).join(``)}
+      `);
+    }
   }
 
   getTemplate() {
@@ -46,11 +54,11 @@ class EventEditCard extends EventCard {
         <form class="event  event--edit" action="#" method="post">
           <header class="event__header">
             <div class="event__type-wrapper">
-              <label class="event__type  event__type-btn" for="event-type-toggle-1">
+              <label class="event__type  event__type-btn" for="event-type-toggle-${this._id}">
                 <span class="visually-hidden">Choose event type</span>
                 <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type.toLowerCase()}.png" alt="Event type icon">
               </label>
-              <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+              <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${this._id}" type="checkbox">
     
               <div class="event__type-list">
                 <fieldset class="event__type-group">
@@ -58,8 +66,8 @@ class EventEditCard extends EventCard {
                   
                   ${TRANSFER_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
-                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
+                      <input id="event-type-${it.toLowerCase()}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
+                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-${this._id}">${it}</label>
                     </div>
                   `).join(``)}
                 </fieldset>
@@ -69,8 +77,8 @@ class EventEditCard extends EventCard {
                   
                   ${ACTIVITY_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
-                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
+                      <input id="event-type-${it.toLowerCase()}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
+                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-${this._id}">${it}</label>
                     </div>
                   `).join(``)}
                 </fieldset>
@@ -78,41 +86,41 @@ class EventEditCard extends EventCard {
             </div>
     
             <div class="event__field-group  event__field-group--destination">
-              <label class="event__label  event__type-output" for="event-destination-1">
-                ${this._type} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`}
+              <label class="event__label  event__type-output" for="event-destination-${this._id}">
+                ${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._type)) ? `to` : `in`}
               </label>
-              <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._city}" list="destination-list-1">
-              <datalist id="destination-list-1">
-                ${CITIES.map((it) => `<option value="${it}"></option>
+              <input class="event__input  event__input--destination" id="event-destination-${this._id}" type="text" name="event-destination" value="${this._city}" list="destination-list-${this._id}">
+              <datalist id="destination-list-${this._id}">
+                ${DESTINATIONS.map((it) => `<option value="${it.name}"></option>
                 `).join(``)}
               </datalist>
             </div>
     
             <div class="event__field-group  event__field-group--time">
-              <label class="visually-hidden" for="event-start-time-1">
+              <label class="visually-hidden" for="event-start-time-${this._id}">
                 From
               </label>
-              <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._timeStart).format(`MM/DD/YY, HH:mm`)}">
+              <input class="event__input  event__input--time" id="event-start-time-${this._id}" type="text" name="event-start-time" value="${moment(this._timeStart).format(`MM/DD/YY, HH:mm`)}">
               &mdash;
-              <label class="visually-hidden" for="event-end-time-1">
+              <label class="visually-hidden" for="event-end-time-${this._id}">
                 To
               </label>
-              <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this._timeStart + this._duration).format(`MM/DD/YY, HH:mm`)}">
+              <input class="event__input  event__input--time" id="event-end-time-${this._id}" type="text" name="event-end-time" value="${moment(this._timeStart + this._duration).format(`MM/DD/YY, HH:mm`)}">
             </div>
     
             <div class="event__field-group  event__field-group--price">
-              <label class="event__label" for="event-price-1">
+              <label class="event__label" for="event-price-${this._id}">
                 <span class="visually-hidden">Price</span>
                 &euro;
               </label>
-              <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${this._price}">
+              <input class="event__input  event__input--price" id="event-price-${this._id}" type="text" name="event-price" value="${this._price}">
             </div>
     
             <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
             <button class="event__reset-btn" type="reset">Delete</button>
     
-            <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
-            <label class="event__favorite-btn" for="event-favorite-1">
+            <input id="event-favorite-${this._id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
+            <label class="event__favorite-btn" for="event-favorite-${this._id}">
               <span class="visually-hidden">Add to favorite</span>
               <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
                 <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -132,8 +140,8 @@ class EventEditCard extends EventCard {
               <div class="event__available-offers">
                 ${this._offers.map((it) => `
                   <div class="event__offer-selector">
-                  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name}-1" type="checkbox" name="event-offer-${it.name}" ${it.isAdded ? `checked` : ``}>
-                  <label class="event__offer-label" for="event-offer-${it.name}-1">
+                  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.title.toLowerCase().split(` `).join(`-`)}-${this._id}" type="checkbox" name="event-offer-${it.title.toLowerCase().split(` `).join(`-`)}" ${it.accepted ? `checked` : ``}>
+                  <label class="event__offer-label" for="event-offer-${it.title.toLowerCase().split(` `).join(`-`)}-${this._id}">
                     <span class="event__offer-title">${it.title}</span>
                     &plus;
                     &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
@@ -150,7 +158,7 @@ class EventEditCard extends EventCard {
               <div class="event__photos-container">
                 <div class="event__photos-tape">
                   ${this._imagesUrls.map((it) => `
-                    <img class="event__photo" src="${it}" alt="Event photo">
+                    <img class="event__photo" src="${it.src}" alt="${it.description}">
                   `).join(``)}
                 </div>
               </div>

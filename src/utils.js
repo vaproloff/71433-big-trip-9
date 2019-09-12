@@ -9,13 +9,6 @@ export const Position = {
 
 export const getRandomElementOfArray = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-export const getRandomBoolean = (probability = 1) => Boolean(Math.round(Math.random() * probability));
-
-export const getRandomlyReducedArray = (arr, newLength) => {
-  const arrCopy = arr.slice();
-  return arr.slice(0, newLength).map(() => arrCopy.splice(Math.random() * arrCopy.length - 1, 1)[0]);
-};
-
 export const getFormattedDuration = (duration) => {
   let formattedDuration = ``;
   if (moment.duration(duration).days()) {
@@ -97,12 +90,21 @@ export const getTripInfoRoute = (events) => {
   return `${firstPoint}${transitPoint}${lastPoint}`;
 };
 
-export const parseOffers = (offersExamples, offersInputs) => {
-  const offersExamplesCopy = offersExamples.map((it) => Object.assign({}, it));
-  const offersChosen = [...offersInputs].map((input) => input.name.split(`-`)[2]);
-  const offersIsAdded = [...offersInputs].map((input) => input.checked);
-  return offersExamplesCopy.filter((it) => offersChosen.includes(it.name)).map((it, index) => {
-    it.isAdded = offersIsAdded[index];
-    return it;
+export const parseOffers = (offersInputLabels) => {
+  return [...offersInputLabels].map((it) => {
+    return {
+      title: it.firstElementChild.textContent,
+      price: parseInt(it.lastElementChild.textContent, 10),
+      accepted: it.control.checked
+    };
+  });
+};
+
+export const parseImages = (imageElements) => {
+  return [...imageElements].map((it) => {
+    return {
+      src: it.src,
+      description: it.alt
+    };
   });
 };

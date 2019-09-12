@@ -5,7 +5,6 @@ import TripController from './controllers/trip-controller';
 import Statistics from './components/statistics';
 import ScreenController from './controllers/screen-controller';
 import API from './api';
-import EventAdapter from './adapter';
 
 const menus = [...new Set([`Table`, `Stats`])];
 const filters = [...new Set([`Everything`, `Future`, `Past`])];

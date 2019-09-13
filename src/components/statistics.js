@@ -5,19 +5,6 @@ class Statistics extends AbstractComponent {
     super();
   }
 
-  hide() {
-    if (!this._element || this._element.classList.contains(`visually-hidden`)) {
-      return;
-    }
-    this._element.classList.add(`visually-hidden`);
-  }
-
-  show() {
-    if (this._element && this._element.classList.contains(`visually-hidden`)) {
-      this._element.classList.remove(`visually-hidden`);
-    }
-  }
-
   getTemplate() {
     return `
       <section class="statistics">

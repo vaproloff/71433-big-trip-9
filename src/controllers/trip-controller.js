@@ -22,6 +22,7 @@ class TripController {
     this._splittedEventsByDay = splitEventsByDay(this._events);
     this._noEventsMessage = new NoEventsMessage();
     this._currentSortingType = `default`;
+    this._currentFilter = `everything`;
     this._refreshCharts = refreshCharts;
 
     this._ableToCreateEvent = true;
@@ -125,15 +126,28 @@ class TripController {
   }
 
   _sortAndSplitEvents() {
+    switch (this._currentFilter) {
+      case `everything`:
+        this._splittedEventsByDay = this._events;
+        break;
+      case `future`:
+        this._splittedEventsByDay = this._events.filter((it) => it.timeStart > moment().valueOf());
+        break;
+      case `past`:
+        this._splittedEventsByDay = this._events.filter((it) => (it.timeStart + it.duration) <= moment().valueOf());
+        break;
+    }
+
     switch (this._currentSortingType) {
       case `time`:
-        this._splittedEventsByDay = [this._events.slice().sort((a, b) => b.duration - a.duration)];
+        this._splittedEventsByDay = [this._splittedEventsByDay.slice().sort((a, b) => b.duration - a.duration)];
         break;
       case `price`:
-        this._splittedEventsByDay = [this._events.slice().sort((a, b) => a.price - b.price)];
+        this._splittedEventsByDay = [this._splittedEventsByDay.slice().sort((a, b) => a.price - b.price)];
         break;
       case `default`:
-        this._splittedEventsByDay = splitEventsByDay(this._events);
+        this._daysList.setNewDays(this._splittedEventsByDay);
+        this._splittedEventsByDay = splitEventsByDay(this._splittedEventsByDay);
         break;
     }
   }
@@ -144,6 +158,17 @@ class TripController {
       this._daysList.removeElement();
       this._emptyDaysList.removeElement();
       this._currentSortingType = evt.target.dataset.sortType;
+      this._sortAndSplitEvents();
+      this._renderEvents();
+    }
+  }
+
+  _onFilterClick(evt) {
+    if (evt.target.tagName === `INPUT` && evt.target.value !== this._currentFilter) {
+      this._flatpickrs.forEach((it) => it());
+      this._daysList.removeElement();
+      this._emptyDaysList.removeElement();
+      this._currentFilter = evt.target.value;
       this._sortAndSplitEvents();
       this._renderEvents();
     }
@@ -206,6 +231,8 @@ class TripController {
       renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo.getElement());
       renderElement(this._tripEventsSection, Position.AFTERBEGIN, this._tripSort.getElement());
       this._tripSort.getElement().addEventListener(`click`, (evt) => this._onTripSortClick(evt));
+
+      document.querySelector(`.trip-filters`).addEventListener(`click`, (evt) => this._onFilterClick(evt));
       this._renderEvents();
     } else {
       renderElement(this._tripEventsSection, Position.BEFOREEND, this._noEventsMessage.getElement());

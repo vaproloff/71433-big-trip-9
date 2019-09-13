@@ -1,5 +1,4 @@
 import Statistics from '../components/statistics';
-import {ACTIVITY_TYPES, TRANSFER_TYPES} from '../main';
 import {Position, renderElement, getFormattedDuration} from '../utils';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';

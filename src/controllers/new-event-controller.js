@@ -45,10 +45,8 @@ class NewEventController {
         isFavorite: false
       };
 
-      this._clearFlatpickr();
-      this._onDataChange(`create`, savedEventData);
+      this._onDataChange(`create`, savedEventData, this._eventNewCard);
       document.removeEventListener(`keydown`, onEscKeyDown);
-      this._eventNewCard.removeElement();
     };
 
     const onEventTypeClick = (evt) => {
@@ -125,12 +123,12 @@ class NewEventController {
   }
 
   onNewTaskReset() {
-    this._clearFlatpickr();
+    this.clearFlatpickr();
     this._eventNewCard.removeElement();
     this._onDataChange(null, null);
   }
 
-  _clearFlatpickr() {
+  clearFlatpickr() {
     this._startFlatpickr.destroy();
     this._endFlatpickr.destroy();
   }

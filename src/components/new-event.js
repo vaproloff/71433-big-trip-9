@@ -7,6 +7,31 @@ class EventNewCard extends EventCard {
     super(eventData);
   }
 
+  shakeOnError() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    this._element.style.border = `3px solid red`;
+    this._element.style.borderRadius = `18px`;
+
+    setTimeout(() => {
+      this._element.style.animation = ``;
+      this._element.style.border = ``;
+      this._element.style.borderRadius = ``;
+    }, ANIMATION_TIMEOUT);
+  }
+
+  block() {
+    this._element.querySelectorAll(`input, button`)
+      .forEach((it) => it.setAttribute(`disabled`, `disabled`));
+    this._element.querySelector(`.event__save-btn`).textContent = `Saving...`;
+  }
+
+  unblock() {
+    this._element.querySelectorAll(`input, button`)
+      .forEach((it) => it.removeAttribute(`disabled`));
+    this._element.querySelector(`.event__save-btn`).textContent = `Save`;
+  }
+
   getTemplate() {
     return `
       <form class="trip-events__item  event  event--edit" action="#" method="post">

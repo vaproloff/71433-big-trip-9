@@ -36,6 +36,7 @@ class PointController {
 
     const onEditFormSubmit = (evt) => {
       evt.preventDefault();
+
       const formData = new FormData(this._eventCardEdit.getElement().querySelector(`form.event--edit`));
       const newEventData = {
         id: this._eventData.id,
@@ -49,9 +50,8 @@ class PointController {
         offers: parseOffers(this._eventCardEdit.getElement().querySelectorAll(`.event__offer-label`)),
         isFavorite: !!formData.get(`event-favorite`)
       };
-      this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
 
-      this._onDataChange(`update`, newEventData);
+      this._onDataChange(`update`, newEventData, this._eventCardEdit);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
@@ -98,7 +98,7 @@ class PointController {
     this._eventCardEdit.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, onDestinationChange);
     this._eventCardEdit.getElement().querySelector(`input[name="event-start-time"]`).addEventListener(`change`, onStartDateChange);
     this._eventCardEdit.getElement().querySelector(`form.event--edit`).addEventListener(`reset`, () => {
-      this._onDataChange(`delete`, this._eventData);
+      this._onDataChange(`delete`, this._eventData, this._eventCardEdit);
     });
 
     renderElement(this._fragment, Position.BEFOREEND, this._eventCard.getElement());

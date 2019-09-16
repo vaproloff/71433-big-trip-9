@@ -33,32 +33,52 @@ class TripController {
     this._onCreateNewTask = this._onCreateNewTask.bind(this);
   }
 
-  _onDataChange(action, eventData) {
+  _onDataChange(action, eventData, element) {
     switch (action) {
       case `delete`:
-        this._api.deleteTask(eventData.id).then(() => {
-          const eventIndex = this._events.findIndex((it) => it === eventData);
-          this._events.splice(eventIndex, 1);
-          this._reRenderBoard();
-          this.toggleAbilityToCreateNewTask(true);
-        });
+        element.block();
+        element.getElement().querySelector(`.event__reset-btn`).textContent = `Deleting...`;
+        this._api.deleteTask(eventData.id)
+          .then(() => this._api.getEvents())
+          .then((events) => {
+            this._events = events;
+            this._reRenderBoard();
+            this.toggleAbilityToCreateNewTask(true);
+          })
+          .catch(() => {
+            element.shakeOnError();
+            element.unblock();
+          });
         break;
       case `update`:
+        element.block();
+        element.getElement().querySelector(`.event__save-btn`).textContent = `Saving...`;
         this._api.updateTask(eventData.id, EventAdapter.toRAW(eventData))
           .then(() => this._api.getEvents())
           .then((events) => {
             this._events = events.sort((a, b) => a.timeStart - b.timeStart);
             this._reRenderBoard();
             this.toggleAbilityToCreateNewTask(true);
+          })
+          .catch(() => {
+            element.shakeOnError();
+            element.unblock();
           });
         break;
       case `create`:
+        element.block();
         this._api.createTask(EventAdapter.toRAW(eventData))
           .then(() => this._api.getEvents())
           .then((events) => {
+            this._newEventController.clearFlatpickr();
+            element.removeElement();
             this._events = events.sort((a, b) => a.timeStart - b.timeStart);
             this._reRenderBoard();
             this.toggleAbilityToCreateNewTask(true);
+          })
+          .catch(() => {
+            element.shakeOnError();
+            element.unblock();
           });
         break;
       default:

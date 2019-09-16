@@ -5,6 +5,8 @@ import TripController from './controllers/trip-controller';
 import ScreenController from './controllers/screen-controller';
 import API from './api';
 import StatController from './controllers/stat-controller';
+import Provider from './provider';
+import Store from './store';
 
 const menus = [...new Set([`Table`, `Stats`])];
 const filters = [...new Set([`Everything`, `Future`, `Past`])];
@@ -21,24 +23,34 @@ renderElement(tripControlsHeadings[1], Position.AFTEREND, new TripFilter([...fil
 let OFFERS;
 let DESTINATIONS;
 
+const store = new Store(`EVENTS_V1.0`, window.localStorage);
 const api = new API(END_POINT, AUTHORIZATION);
-api.getOffers().then((offers) => {
+const provider = new Provider(api, store);
+provider.getOffers().then((offers) => {
   OFFERS = offers;
 
-  api.getDestinations().then((destinations) => {
+  provider.getDestinations().then((destinations) => {
     DESTINATIONS = destinations;
 
-    api.getEvents().then((events) => {
+    provider.getEvents().then((events) => {
       const tripEventsSection = document.querySelector(`section.trip-events`);
       const statController = new StatController(tripEventsSection, events);
 
-      const tripController = new TripController(tripEventsSection, events, api, statController.refreshCharts.bind(statController));
+      const tripController = new TripController(tripEventsSection, events, provider, statController.refreshCharts.bind(statController));
       tripController.init();
 
       const screenController = new ScreenController(menu, tripController, statController);
       screenController.init();
     });
   });
+});
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncEvents();
 });
 
 export {OFFERS, DESTINATIONS, ACTIVITY_TYPES, TRANSFER_TYPES};

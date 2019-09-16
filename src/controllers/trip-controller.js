@@ -10,8 +10,8 @@ import NewEventController from './new-event-controller';
 import EventAdapter from '../adapter';
 
 class TripController {
-  constructor(tripEventsSection, events, api, refreshCharts) {
-    this._api = api;
+  constructor(tripEventsSection, events, provider, refreshCharts) {
+    this._provider = provider;
     this._tripEventsSection = tripEventsSection;
     this._tripInfoSection = document.querySelector(`section.trip-main__trip-info`);
     this._tripInfo = new TripInfo();
@@ -38,8 +38,8 @@ class TripController {
       case `delete`:
         element.block();
         element.getElement().querySelector(`.event__reset-btn`).textContent = `Deleting...`;
-        this._api.deleteTask(eventData.id)
-          .then(() => this._api.getEvents())
+        this._provider.deleteEvent(eventData.id)
+          .then(() => this._provider.getEvents())
           .then((events) => {
             this._events = events;
             this._reRenderBoard();
@@ -53,8 +53,8 @@ class TripController {
       case `update`:
         element.block();
         element.getElement().querySelector(`.event__save-btn`).textContent = `Saving...`;
-        this._api.updateTask(eventData.id, EventAdapter.toRAW(eventData))
-          .then(() => this._api.getEvents())
+        this._provider.updateEvent(eventData.id, EventAdapter.toRAW(eventData))
+          .then(() => this._provider.getEvents())
           .then((events) => {
             this._events = events.sort((a, b) => a.timeStart - b.timeStart);
             this._reRenderBoard();
@@ -67,8 +67,8 @@ class TripController {
         break;
       case `create`:
         element.block();
-        this._api.createTask(EventAdapter.toRAW(eventData))
-          .then(() => this._api.getEvents())
+        this._provider.createEvent(EventAdapter.toRAW(eventData))
+          .then(() => this._provider.getEvents())
           .then((events) => {
             this._newEventController.clearFlatpickr();
             element.removeElement();

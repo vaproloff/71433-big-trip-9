@@ -19,7 +19,7 @@ const toJSON = (response) => {
   return response.json();
 };
 
-const API = class {
+class API {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -41,26 +41,40 @@ const API = class {
       .then(EventAdapter.parseEvents);
   }
 
-  createTask(data) {
+  createEvent(data) {
     return this._load({
       url: `points`,
       method: Method.POST,
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
-    });
+    })
+      .then(toJSON)
+      .then(EventAdapter.parseEvent);
   }
 
-  updateTask(id, data) {
+  updateEvent(id, data) {
     return this._load({
       url: `points/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
-    });
+    })
+      .then(toJSON)
+      .then(EventAdapter.parseEvent);
   }
 
-  deleteTask(id) {
+  deleteEvent(id) {
     return this._load({url: `points/${id}`, method: Method.DELETE});
+  }
+
+  syncEvents(events) {
+    return this._load({
+      url: `points/sync`,
+      method: `POST`,
+      body: JSON.stringify(events),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
@@ -72,6 +86,6 @@ const API = class {
         throw new Error(err);
       });
   }
-};
+}
 
 export default API;

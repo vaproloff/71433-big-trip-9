@@ -1,3 +1,5 @@
+import {convertToHttpsUrl} from './utils';
+
 class EventAdapter {
   constructor(data) {
     this.id = data[`id`];
@@ -7,7 +9,10 @@ class EventAdapter {
     this.offers = data[`offers`];
     this.city = data[`destination`][`name`];
     this.description = data[`destination`][`description`];
-    this.imagesUrls = data[`destination`][`pictures`];
+    this.imagesUrls = data[`destination`][`pictures`].map((it) => {
+      it.src = convertToHttpsUrl(it.src);
+      return it;
+    });
     this.price = data[`base_price`];
     this.isFavorite = Boolean(data[`is_favorite`]);
   }

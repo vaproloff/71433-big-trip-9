@@ -108,3 +108,10 @@ export const parseImages = (imageElements) => {
     };
   });
 };
+
+export const convertToHttpsUrl = (url) => {
+  if (!url.startsWith(`https`)) {
+    return `${url.slice(0, 4)}s${url.slice(4)}`;
+  }
+  return url;
+};

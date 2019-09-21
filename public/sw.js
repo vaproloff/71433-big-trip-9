@@ -34,12 +34,7 @@ self.addEventListener(`fetch`, (evt) => {
       .then((cache) => {
         return cache.match(evt.request)
           .then((response) => {
-            return response || fetch(evt.request).then((response) => {
-              caches.open(CACHE_NAME).then((cache) => {
-                return cache.put(evt.request, response.clone())
-              });
-              return response.clone();
-            });
+            return response || fetch(evt.request);
           })
       })
   );

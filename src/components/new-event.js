@@ -1,6 +1,7 @@
 import EventCard from './event';
 import {ACTIVITY_TYPES, TRANSFER_TYPES, DESTINATIONS} from '../main';
 import moment from 'moment';
+import {getFirstCapital} from '../utils';
 
 class EventNewCard extends EventCard {
   constructor(eventData) {
@@ -39,7 +40,7 @@ class EventNewCard extends EventCard {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type.toLowerCase()}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -49,8 +50,8 @@ class EventNewCard extends EventCard {
                   
                   ${TRANSFER_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
-                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
+                      <input id="event-type-${it}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it}" ${this._type === it ? `checked` : ``}>
+                      <label class="event__type-label  event__type-label--${it}" for="event-type-${it}-1">${getFirstCapital(it)}</label>
                     </div>
                   `).join(``)}
                 </fieldset>
@@ -60,8 +61,8 @@ class EventNewCard extends EventCard {
                   
                   ${ACTIVITY_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
-                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-1">${it}</label>
+                      <input id="event-type-${it}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it}" ${this._type === it ? `checked` : ``}>
+                      <label class="event__type-label  event__type-label--${it}" for="event-type-${it}-1">${getFirstCapital(it)}</label>
                     </div>
                   `).join(``)}
                 </fieldset>
@@ -70,7 +71,7 @@ class EventNewCard extends EventCard {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${this._type} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`}
+              ${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._city}" list="destination-list-1">
             <datalist id="destination-list-1">

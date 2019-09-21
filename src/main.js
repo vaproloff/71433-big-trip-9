@@ -10,8 +10,8 @@ import Store from './store';
 
 const menus = [...new Set([`Table`, `Stats`])];
 const filters = [...new Set([`Everything`, `Future`, `Past`])];
-const ACTIVITY_TYPES = [`Check-in`, `Restaurant`, `Sightseeing`];
-const TRANSFER_TYPES = [`Bus`, `Drive`, `Flight`, `Ship`, `Taxi`, `Train`, `Transport`];
+const ACTIVITY_TYPES = [`check-in`, `restaurant`, `sightseeing`];
+const TRANSFER_TYPES = [`bus`, `drive`, `flight`, `ship`, `taxi`, `train`, `transport`];
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://htmlacademy-es-9.appspot.com/big-trip`;
 
@@ -23,7 +23,7 @@ renderElement(tripControlsHeadings[1], Position.AFTEREND, new TripFilter([...fil
 let OFFERS;
 let DESTINATIONS;
 
-const store = new Store(`EVENTS_V1.0`, window.localStorage);
+const store = new Store(window.localStorage);
 const api = new API(END_POINT, AUTHORIZATION);
 const provider = new Provider(api, store);
 provider.getOffers().then((offers) => {
@@ -35,16 +35,15 @@ provider.getOffers().then((offers) => {
     provider.getEvents().then((events) => {
       const tripEventsSection = document.querySelector(`section.trip-events`);
       const statController = new StatController(tripEventsSection, events);
-
       const tripController = new TripController(tripEventsSection, events, provider, statController.refreshCharts.bind(statController));
       tripController.init();
-
       const screenController = new ScreenController(menu, tripController, statController);
       screenController.init();
     });
   });
 });
 
+document.title = `${document.title}${window.navigator.onLine ? `` : `[OFFLINE]`}`;
 window.addEventListener(`offline`, () => {
   document.title = `${document.title}[OFFLINE]`;
 });

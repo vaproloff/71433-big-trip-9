@@ -1,5 +1,3 @@
-import {convertToHttpsUrl} from './utils';
-
 class EventAdapter {
   constructor(data) {
     this.id = data[`id`];
@@ -9,10 +7,7 @@ class EventAdapter {
     this.offers = data[`offers`];
     this.city = data[`destination`][`name`];
     this.description = data[`destination`][`description`];
-    this.imagesUrls = data[`destination`][`pictures`].map((it) => {
-      it.src = convertToHttpsUrl(it.src);
-      return it;
-    });
+    this.imagesUrls = data[`destination`][`pictures`];
     this.price = data[`base_price`];
     this.isFavorite = Boolean(data[`is_favorite`]);
   }
@@ -25,20 +20,20 @@ class EventAdapter {
     return data.map(EventAdapter.parseEvent);
   }
 
-  static toRAW(data) {
+  toRAW() {
     return {
-      'id': data.id ? data.id : null,
-      'date_from': data.timeStart,
-      'date_to': data.timeStart + data.duration,
-      'type': data.type,
-      'offers': data.offers,
+      'id': this.id,
+      'date_from': this.timeStart,
+      'date_to': this.timeStart + this.duration,
+      'type': this.type,
+      'offers': this.offers,
       'destination': {
-        'name': data.city,
-        'description': data.description,
-        'pictures': data.imagesUrls
+        'name': this.city,
+        'description': this.description,
+        'pictures': this.imagesUrls
       },
-      'base_price': data.price,
-      'is_favorite': data.isFavorite
+      'base_price': this.price,
+      'is_favorite': this.isFavorite
     };
   }
 }

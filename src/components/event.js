@@ -20,9 +20,9 @@ class EventCard extends AbstractComponent {
       <li class="trip-events__item">
         <div class="event">
           <div class="event__type">
-            <img class="event__type-icon" width="42" height="42" src="img/icons/${this._type.toLowerCase()}.png" alt="${getFirstCapital(this._type)}">
+            <img class="event__type-icon" width="42" height="42" src="img/icons/${this._type}.png" alt="${getFirstCapital(this._type)}">
           </div>
-          <h3 class="event__title">${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._type)) ? `to` : `in`} ${this._city}</h3>
+          <h3 class="event__title">${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`} ${this._city}</h3>
     
           <div class="event__schedule">
             <p class="event__time">

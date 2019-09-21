@@ -42,8 +42,8 @@ class TripController {
           .then(() => this._provider.getEvents())
           .then((events) => {
             this._events = events;
-            this._reRenderBoard();
-            this.toggleAbilityToCreateNewTask(true);
+            this._reRenderBoard(true);
+            this.setAbilityToCreateNewTask(true);
           })
           .catch(() => {
             element.shakeOnError();
@@ -53,12 +53,12 @@ class TripController {
       case `update`:
         element.block();
         element.getElement().querySelector(`.event__save-btn`).textContent = `Saving...`;
-        this._provider.updateEvent(eventData.id, EventAdapter.toRAW(eventData))
+        this._provider.updateEvent(eventData.id, eventData.toRAW())
           .then(() => this._provider.getEvents())
           .then((events) => {
             this._events = events.sort((a, b) => a.timeStart - b.timeStart);
-            this._reRenderBoard();
-            this.toggleAbilityToCreateNewTask(true);
+            this._reRenderBoard(true);
+            this.setAbilityToCreateNewTask(true);
           })
           .catch(() => {
             element.shakeOnError();
@@ -67,14 +67,14 @@ class TripController {
         break;
       case `create`:
         element.block();
-        this._provider.createEvent(EventAdapter.toRAW(eventData))
+        this._provider.createEvent(eventData.toRAW())
           .then(() => this._provider.getEvents())
           .then((events) => {
             this._newEventController.clearFlatpickr();
             element.removeElement();
             this._events = events.sort((a, b) => a.timeStart - b.timeStart);
-            this._reRenderBoard();
-            this.toggleAbilityToCreateNewTask(true);
+            this._reRenderBoard(true);
+            this.setAbilityToCreateNewTask(true);
           })
           .catch(() => {
             element.shakeOnError();
@@ -82,22 +82,24 @@ class TripController {
           });
         break;
       default:
-        this.toggleAbilityToCreateNewTask(true);
+        this.setAbilityToCreateNewTask(true);
         break;
     }
   }
 
-  _reRenderBoard() {
+  _reRenderBoard(isFull) {
     this._flatpickrs.forEach((it) => it());
     this._daysList.removeElement();
     this._emptyDaysList.removeElement();
     this._sortAndSplitEvents();
-    this._daysList.setNewDays(this._events);
-    this._refreshTripInfo();
-    this._refreshCharts(this._events);
+    if (isFull) {
+      this._daysList.setNewDays(this._events);
+      this._refreshTripInfo();
+      document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
+      this._refreshCharts(this._events);
+      this._checkEventsAvailable();
+    }
     this._renderEvents();
-    document.querySelector(`.trip-info__cost-value`).innerText = countTotalTripCost(this._events);
-    this._checkEventsAvailable();
   }
 
   _refreshTripInfo() {
@@ -174,23 +176,15 @@ class TripController {
 
   _onTripSortClick(evt) {
     if (evt.target.tagName === `INPUT` && evt.target.dataset.sortType !== this._currentSortingType) {
-      this._flatpickrs.forEach((it) => it());
-      this._daysList.removeElement();
-      this._emptyDaysList.removeElement();
       this._currentSortingType = evt.target.dataset.sortType;
-      this._sortAndSplitEvents();
-      this._renderEvents();
+      this._reRenderBoard();
     }
   }
 
   _onFilterClick(evt) {
     if (evt.target.tagName === `INPUT` && evt.target.value !== this._currentFilter) {
-      this._flatpickrs.forEach((it) => it());
-      this._daysList.removeElement();
-      this._emptyDaysList.removeElement();
       this._currentFilter = evt.target.value;
-      this._sortAndSplitEvents();
-      this._renderEvents();
+      this._reRenderBoard();
     }
   }
 
@@ -198,21 +192,24 @@ class TripController {
     if (this._noEventsMessage) {
       this._noEventsMessage.removeElement();
     }
-    this.toggleAbilityToCreateNewTask(false);
+    this.setAbilityToCreateNewTask(false);
 
     const defaultEventData = {
-      type: getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
-      city: ``,
-      imagesUrls: [],
-      description: ``,
-      timeStart: moment().valueOf(),
-      duration: moment.duration(1, `hours`).valueOf(),
-      price: 0,
-      offers: [],
-      isFavorite: false
+      'id': null,
+      'date_from': moment().valueOf(),
+      'date_to': moment().valueOf() + moment.duration(1, `hours`).valueOf(),
+      'type': getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
+      'offers': [],
+      'destination': {
+        'name': ``,
+        'description': ``,
+        'pictures': []
+      },
+      'base_price': 0,
+      'is_favorite': false
     };
 
-    this._newEventController = new NewEventController(this._tripEventsSection, defaultEventData, this._onDataChange, this._onCreateNewTask);
+    this._newEventController = new NewEventController(this._tripEventsSection, EventAdapter.parseEvent(defaultEventData), this._onDataChange, this._onCreateNewTask);
   }
 
   hide() {
@@ -228,7 +225,7 @@ class TripController {
     }
   }
 
-  toggleAbilityToCreateNewTask(ability) {
+  setAbilityToCreateNewTask(ability) {
     if (this._ableToCreateEvent !== ability) {
       this._ableToCreateEvent = ability;
     }
@@ -251,7 +248,6 @@ class TripController {
       renderElement(this._tripInfoSection, Position.AFTERBEGIN, this._tripInfo.getElement());
       renderElement(this._tripEventsSection, Position.AFTERBEGIN, this._tripSort.getElement());
       this._tripSort.getElement().addEventListener(`click`, (evt) => this._onTripSortClick(evt));
-
       document.querySelector(`.trip-filters`).addEventListener(`click`, (evt) => this._onFilterClick(evt));
       this._renderEvents();
     } else {

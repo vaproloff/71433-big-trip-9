@@ -16,13 +16,13 @@ class PointController {
     this._eventCardEdit = new EventEditCard(eventData);
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._eventTypeChosen = eventData.type.toLowerCase();
+    this._eventTypeChosen = eventData.type;
 
-    this.init();
+    this._init();
     this._addFlatpickrs();
   }
 
-  init() {
+  _init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         onEditingCardClose();
@@ -36,22 +36,18 @@ class PointController {
 
     const onEditFormSubmit = (evt) => {
       evt.preventDefault();
-
       const formData = new FormData(this._eventCardEdit.getElement().querySelector(`form.event--edit`));
-      const newEventData = {
-        id: this._eventData.id,
-        type: formData.get(`event-type`),
-        city: formData.get(`event-destination`),
-        imagesUrls: parseImages(this._eventCardEdit.getElement().querySelectorAll(`img.event__photo`)),
-        description: this._eventCardEdit.getElement().querySelector(`.event__destination-description`).innerText,
-        timeStart: moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
-        duration: moment(formData.get(`event-end-time`), `MM/DD/YY, HH:mm`).valueOf() - moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
-        price: parseInt(formData.get(`event-price`), 10),
-        offers: parseOffers(this._eventCardEdit.getElement().querySelectorAll(`.event__offer-label`)),
-        isFavorite: !!formData.get(`event-favorite`)
-      };
+      this._eventData.type = formData.get(`event-type`).toLowerCase();
+      this._eventData.city = formData.get(`event-destination`);
+      this._eventData.imagesUrls = parseImages(this._eventCardEdit.getElement().querySelectorAll(`img.event__photo`));
+      this._eventData.description = this._eventCardEdit.getElement().querySelector(`.event__destination-description`).innerText;
+      this._eventData.timeStart = moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf();
+      this._eventData.duration = moment(formData.get(`event-end-time`), `MM/DD/YY, HH:mm`).valueOf() - moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf();
+      this._eventData.price = parseInt(formData.get(`event-price`), 10);
+      this._eventData.offers = parseOffers(this._eventCardEdit.getElement().querySelectorAll(`.event__offer-label`));
+      this._eventData.isFavorite = !!formData.get(`event-favorite`);
 
-      this._onDataChange(`update`, newEventData, this._eventCardEdit);
+      this._onDataChange(`update`, this._eventData, this._eventCardEdit);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
@@ -62,22 +58,27 @@ class PointController {
     };
 
     const onEventTypeClick = (evt) => {
-      if (evt.target.tagName === `INPUT` && evt.target.value !== this._eventTypeChosen) {
-        this._eventTypeChosen = evt.target.value;
+      if (evt.target.tagName === `INPUT` && evt.target.value.toLowerCase() !== this._eventTypeChosen) {
+        this._eventTypeChosen = evt.target.value.toLowerCase();
         const eventTypeInput = this._eventCardEdit.getElement().querySelector(`.event__type-output`);
         const eventTypeIcon = this._eventCardEdit.getElement().querySelector(`.event__type-icon`);
-        const eventTypeChosen = getFirstCapital(evt.target.value);
-        eventTypeIcon.src = `img/icons/${eventTypeChosen.toLowerCase()}.png`;
-        eventTypeInput.innerText = `${eventTypeChosen} ${TRANSFER_TYPES.includes(eventTypeChosen) ? `to` : `in`}`;
-        if (OFFERS.map((it) => it.type).includes(eventTypeChosen.toLowerCase())) {
-          this._eventCardEdit.refreshOffers(OFFERS.find((offer) => offer.type === eventTypeChosen.toLowerCase()).offers);
+        eventTypeIcon.src = `img/icons/${this._eventTypeChosen}.png`;
+        eventTypeInput.innerText = `${getFirstCapital(this._eventTypeChosen)} ${TRANSFER_TYPES.includes(this._eventTypeChosen) ? `to` : `in`}`;
+        if (OFFERS.map((it) => it.type).includes(this._eventTypeChosen)) {
+          this._eventCardEdit.refreshOffers(OFFERS.find((offer) => offer.type === this._eventTypeChosen).offers);
         } else {
           this._eventCardEdit.refreshOffers();
         }
       }
     };
 
+    const cities = [...this._eventCardEdit.getElement().querySelectorAll(`.event__field-group--destination option`)]
+      .map((it) => it.value);
     const onDestinationChange = (evt) => {
+      if (!cities.includes(evt.target.value)) {
+        evt.target.value = ``;
+        return;
+      }
       const cityChosen = evt.target.value;
       const cityIndex = DESTINATIONS.findIndex((it) => it.name === cityChosen);
       this._eventCardEdit.refreshDescription(DESTINATIONS[cityIndex].description);

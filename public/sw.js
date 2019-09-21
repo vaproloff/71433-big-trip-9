@@ -1,14 +1,9 @@
 const CACHE_NAME = `BIG_TRIP_V1.0`;
 
-// Настроим кеширование статики во время установки SW.
 self.addEventListener(`install`, (evt) => {
-  console.log(`sw, install`, {evt});
-  // Активация SW не произойдет, пока кеш не будет настроен.
   evt.waitUntil(
-    // Открываем наш кеш.
     caches.open(CACHE_NAME)
       .then((cache) => {
-        // Добавляем в кеш список статических ресурсов.
         return cache.addAll([
           `./`,
           `./index.html`,
@@ -28,25 +23,24 @@ self.addEventListener(`install`, (evt) => {
           `./img/icons/train.png`,
           `./img/icons/transport.png`,
           `./img/icons/trip.png`,
-        ])
+        ]);
       })
   );
 });
 
-self.addEventListener(`activate`, (evt) => {
-  console.log(`sw`, `activate`, {evt});
-});
-
 self.addEventListener(`fetch`, (evt) => {
   evt.respondWith(
-    caches.match(evt.request)
-      .then((response) => {
-        console.log(`Find in cache`, {response});
-        return response ? response : fetch(evt.request);
-      })
-      .catch((err) => {
-        console.error({err});
-        throw err;
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        return cache.match(evt.request)
+          .then((response) => {
+            return response || fetch(evt.request).then((response) => {
+              caches.open(CACHE_NAME).then((cache) => {
+                return cache.put(evt.request, response.clone())
+              });
+              return response.clone();
+            });
+          })
       })
   );
 });

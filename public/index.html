@@ -64,25 +64,17 @@
     </header>
     <main class="page-body__page-main  page-main">
       <div class="page-body__container">
-          <section class="trip-events">
-            <h2 class="visually-hidden">Trip events</h2>
+        <section class="trip-events">
+          <h2 class="visually-hidden">Trip events</h2>
 
-            <!-- Сортировка -->
+          <!-- Сортировка -->
 
-            <!-- Контент -->
-          </section>
+          <!-- Контент -->
+        </section>
       </div>
     </main>
     <script>
-        navigator.serviceWorker.register('./sw.js')
-            .then(function(reg) {
-                // регистрация сработала
-                console.log('Registration succeeded. Scope is ' + reg.scope);
-            })
-            .catch(function(error) {
-                // регистрация прошла неудачно
-                console.log('Registration failed with ' + error);
-            });
+      navigator.serviceWorker.register('./sw.js');
     </script>
     <script src="bundle.js"></script>
   </body>

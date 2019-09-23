@@ -1,4 +1,4 @@
-import EventCard from './event';
+import EventCard from './event-card';
 import {ACTIVITY_TYPES, TRANSFER_TYPES, DESTINATIONS} from '../main';
 import moment from 'moment';
 import {getFirstCapital} from '../utils';

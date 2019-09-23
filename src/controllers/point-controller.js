@@ -1,5 +1,5 @@
-import EventCard from '../components/event';
-import EventEditCard from '../components/event-edit';
+import EventCard from '../components/event-card';
+import EventEditCard from '../components/event-edit-card';
 import {getFirstCapital, Position, renderElement, parseOffers, parseImages} from '../utils';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';

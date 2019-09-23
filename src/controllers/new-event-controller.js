@@ -1,6 +1,6 @@
 import {getFirstCapital, Position, renderElement} from '../utils';
 import moment from 'moment';
-import EventNewCard from '../components/new-event';
+import EventNewCard from '../components/new-event-card';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';

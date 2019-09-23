@@ -7,8 +7,6 @@ export const Position = {
   BEFOREEND: `beforeend`
 };
 
-export const getRandomElementOfArray = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
 export const getFormattedDuration = (duration) => {
   let formattedDuration = ``;
   if (moment.duration(duration).days()) {
@@ -107,4 +105,11 @@ export const parseImages = (imageElements) => {
       description: it.alt
     };
   });
+};
+
+export const convertUrlToHttps = (url) => {
+  if (!url.startsWith(`https`)) {
+    return `${url.slice(0, 4)}s${url.slice(4)}`;
+  }
+  return url;
 };

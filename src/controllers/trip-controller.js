@@ -1,10 +1,9 @@
-import {countTotalTripCost, getRandomElementOfArray, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './../utils';
+import {countTotalTripCost, getTripInfoRoute, Position, renderElement, splitEventsByDay} from './../utils';
 import TripInfo from './../components/trip-info';
-import TripSort from './../components/sort';
-import EventDaysList from './../components/days-list';
-import NoEventsMessage from './../components/no-events';
+import TripSort from './../components/trip-sort';
+import EventDaysList from './../components/event-days-list';
+import NoEventsMessage from './../components/no-events-message';
 import PointController from './point-controller';
-import {ACTIVITY_TYPES, TRANSFER_TYPES} from '../main';
 import moment from 'moment';
 import NewEventController from './new-event-controller';
 import EventAdapter from '../adapter';
@@ -198,7 +197,7 @@ class TripController {
       'id': null,
       'date_from': moment().valueOf(),
       'date_to': moment().valueOf() + moment.duration(1, `hours`).valueOf(),
-      'type': getRandomElementOfArray([...ACTIVITY_TYPES, ...TRANSFER_TYPES]),
+      'type': `bus`,
       'offers': [],
       'destination': {
         'name': ``,
@@ -217,12 +216,20 @@ class TripController {
       return;
     }
     this._tripEventsSection.classList.add(`visually-hidden`);
+    document.querySelectorAll(`.trip-filters__filter-input`).forEach((it) => {
+      it.disabled = true;
+    });
+    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
   }
 
   show() {
     if (this._tripEventsSection.classList.contains(`visually-hidden`)) {
       this._tripEventsSection.classList.remove(`visually-hidden`);
     }
+    document.querySelectorAll(`.trip-filters__filter-input`).forEach((it) => {
+      it.disabled = false;
+    });
+    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
   }
 
   setAbilityToCreateNewTask(ability) {

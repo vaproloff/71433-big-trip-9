@@ -60,7 +60,7 @@ export const deleteElement = (element) => {
 
 export const splitEventsByDay = (events) => {
   const temp = {};
-  const getDateFromStamp = (timeStamp) => new Date(timeStamp).setHours(0, 0 ,0, 0).valueOf();
+  const getDateFromStamp = (timeStamp) => new Date(timeStamp).setHours(0, 0, 0, 0).valueOf();
   events.forEach((it) => {
     if (!temp[getDateFromStamp(it.timeStart)]) {
       temp[getDateFromStamp(it.timeStart)] = [];

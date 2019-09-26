@@ -87,6 +87,10 @@ class StatController {
       chart.data.labels[i] = it.type;
       chart.data.datasets[0].data[i] = it.value;
     });
+    while (data.length < chart.data.labels.length) {
+      chart.data.labels.pop();
+      chart.data.datasets[0].data.pop();
+    }
     chart.update();
   }
 

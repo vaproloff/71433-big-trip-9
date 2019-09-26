@@ -17,12 +17,12 @@ class ScreenController {
           case `Table`:
             this._stats.hide();
             this._table.show();
-            this._table.toggleAbilityToCreateNewTask(true);
+            this._table.setAbilityToCreateNewTask(true);
             break;
           case `Stats`:
             this._table.hide();
             this._stats.show();
-            this._table.toggleAbilityToCreateNewTask(false);
+            this._table.setAbilityToCreateNewTask(false);
             break;
         }
       }

@@ -1,4 +1,4 @@
-import EventCard from './event';
+import EventCard from './event-card';
 import {TRANSFER_TYPES, ACTIVITY_TYPES, DESTINATIONS} from '../main';
 import moment from 'moment';
 import {getFirstCapital} from '../utils';
@@ -18,9 +18,9 @@ class EventEditCard extends EventCard {
       const offersContent = `
         ${offers.map((it) => `
           <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.name.toLowerCase().split(` `).join(`-`)}-${this._id}" type="checkbox" name="event-offer-${it.name.toLowerCase().split(` `).join(`-`)}">
-          <label class="event__offer-label" for="event-offer-${it.name.toLowerCase().split(` `).join(`-`)}-${this._id}">
-            <span class="event__offer-title">${it.name}</span>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${it.title.toLowerCase().split(` `).join(`-`)}-${this._id}" type="checkbox" name="event-offer-${it.title.toLowerCase().split(` `).join(`-`)}">
+          <label class="event__offer-label" for="event-offer-${it.title.toLowerCase().split(` `).join(`-`)}-${this._id}">
+            <span class="event__offer-title">${it.title}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
           </label>
@@ -81,7 +81,7 @@ class EventEditCard extends EventCard {
             <div class="event__type-wrapper">
               <label class="event__type  event__type-btn" for="event-type-toggle-${this._id}">
                 <span class="visually-hidden">Choose event type</span>
-                <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type.toLowerCase()}.png" alt="Event type icon">
+                <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
               </label>
               <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${this._id}" type="checkbox">
     
@@ -91,8 +91,8 @@ class EventEditCard extends EventCard {
                   
                   ${TRANSFER_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
-                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-${this._id}">${it}</label>
+                      <input id="event-type-${it}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it}" ${this._type === it ? `checked` : ``}>
+                      <label class="event__type-label  event__type-label--${it}" for="event-type-${it}-${this._id}">${getFirstCapital(it)}</label>
                     </div>
                   `).join(``)}
                 </fieldset>
@@ -102,8 +102,8 @@ class EventEditCard extends EventCard {
                   
                   ${ACTIVITY_TYPES.map((it) => `
                     <div class="event__type-item">
-                      <input id="event-type-${it.toLowerCase()}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it.toLowerCase()}" ${this._type.toLowerCase() === it.toLowerCase() ? `checked` : ``}>
-                      <label class="event__type-label  event__type-label--${it.toLowerCase()}" for="event-type-${it.toLowerCase()}-${this._id}">${it}</label>
+                      <input id="event-type-${it}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${it}" ${this._type === it ? `checked` : ``}>
+                      <label class="event__type-label  event__type-label--${it}" for="event-type-${it}-${this._id}">${getFirstCapital(it)}</label>
                     </div>
                   `).join(``)}
                 </fieldset>
@@ -112,7 +112,7 @@ class EventEditCard extends EventCard {
     
             <div class="event__field-group  event__field-group--destination">
               <label class="event__label  event__type-output" for="event-destination-${this._id}">
-                ${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._type)) ? `to` : `in`}
+                ${getFirstCapital(this._type)} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`}
               </label>
               <input class="event__input  event__input--destination" id="event-destination-${this._id}" type="text" name="event-destination" value="${this._city}" list="destination-list-${this._id}">
               <datalist id="destination-list-${this._id}">

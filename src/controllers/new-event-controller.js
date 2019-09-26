@@ -1,6 +1,6 @@
 import {getFirstCapital, Position, renderElement} from '../utils';
 import moment from 'moment';
-import EventNewCard from '../components/new-event';
+import EventNewCard from '../components/new-event-card';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -16,11 +16,11 @@ class NewEventController {
 
     this._eventNewCard.getElement().querySelector(`.event__input--destination`).required = true;
 
-    this.init();
+    this._init();
     this._addFlatpickrs();
   }
 
-  init() {
+  _init() {
     this._onCreateNewTask();
 
     const onEscKeyDown = (evt) => {
@@ -33,32 +33,23 @@ class NewEventController {
       evt.preventDefault();
       const formData = new FormData(this._eventNewCard.getElement());
       this._newEventData.price = parseInt(formData.get(`event-price`), 10);
-      const savedEventData = {
-        type: formData.get(`event-type`).toLowerCase(),
-        city: formData.get(`event-destination`),
-        imagesUrls: this._newEventData.imagesUrls,
-        description: this._newEventData.description,
-        timeStart: moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
-        duration: moment(formData.get(`event-end-time`), `MM/DD/YY, HH:mm`).valueOf() - moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf(),
-        price: parseInt(formData.get(`event-price`), 10),
-        offers: this._newEventData.offers,
-        isFavorite: false
-      };
+      this._newEventData.timeStart = moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf();
+      this._newEventData.duration = moment(formData.get(`event-end-time`), `MM/DD/YY, HH:mm`).valueOf() - moment(formData.get(`event-start-time`), `MM/DD/YY, HH:mm`).valueOf();
 
-      this._onDataChange(`create`, savedEventData, this._eventNewCard);
+      this._onDataChange(`create`, this._newEventData, this._eventNewCard);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
     const onEventTypeClick = (evt) => {
-      if (evt.target.tagName === `INPUT` && evt.target.value !== this._newEventData.type) {
-        this._newEventData.type = evt.target.value;
+      if (evt.target.tagName === `INPUT` && evt.target.value.toLowerCase() !== this._newEventData.type) {
+        this._newEventData.type = evt.target.value.toLowerCase();
         const eventTypeInput = this._eventNewCard.getElement().querySelector(`.event__type-output`);
         const eventTypeIcon = this._eventNewCard.getElement().querySelector(`.event__type-icon`);
-        eventTypeIcon.src = `img/icons/${this._newEventData.type.toLowerCase()}.png`;
-        eventTypeInput.innerText = `${getFirstCapital(this._newEventData.type)} ${TRANSFER_TYPES.includes(getFirstCapital(this._newEventData.type)) ? `to` : `in`}`;
+        eventTypeIcon.src = `img/icons/${this._newEventData.type}.png`;
+        eventTypeInput.innerText = `${getFirstCapital(this._newEventData.type)} ${TRANSFER_TYPES.includes(this._newEventData.type) ? `to` : `in`}`;
 
-        if (OFFERS.map((it) => it.type).includes(this._newEventData.type.toLowerCase())) {
-          this._newEventData.offers = OFFERS.find((offer) => offer.type === this._newEventData.type.toLowerCase()).offers
+        if (OFFERS.map((it) => it.type).includes(this._newEventData.type)) {
+          this._newEventData.offers = OFFERS.find((offer) => offer.type === this._newEventData.type).offers
             .map((it) => {
               return {
                 title: it.name,
@@ -70,7 +61,13 @@ class NewEventController {
       }
     };
 
+    const cities = [...this._eventNewCard.getElement().querySelectorAll(`.event__field-group--destination option`)]
+      .map((it) => it.value);
     const onDestinationChange = (evt) => {
+      if (!cities.includes(evt.target.value)) {
+        evt.target.value = ``;
+        return;
+      }
       this._newEventData.city = evt.target.value;
       const cityIndex = DESTINATIONS.findIndex((it) => it.name === this._newEventData.city);
       this._newEventData.description = DESTINATIONS[cityIndex].description;

@@ -7,8 +7,6 @@ export const Position = {
   BEFOREEND: `beforeend`
 };
 
-export const getRandomElementOfArray = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
 export const getFormattedDuration = (duration) => {
   let formattedDuration = ``;
   if (moment.duration(duration).days()) {
@@ -62,7 +60,7 @@ export const deleteElement = (element) => {
 
 export const splitEventsByDay = (events) => {
   const temp = {};
-  const getDateFromStamp = (timeStamp) => new Date(timeStamp).getDate().toString();
+  const getDateFromStamp = (timeStamp) => new Date(timeStamp).setHours(0, 0, 0, 0).valueOf();
   events.forEach((it) => {
     if (!temp[getDateFromStamp(it.timeStart)]) {
       temp[getDateFromStamp(it.timeStart)] = [];
@@ -107,4 +105,11 @@ export const parseImages = (imageElements) => {
       description: it.alt
     };
   });
+};
+
+export const convertUrlToHttps = (url) => {
+  if (!url.startsWith(`https`)) {
+    return `${url.slice(0, 4)}s${url.slice(4)}`;
+  }
+  return url;
 };

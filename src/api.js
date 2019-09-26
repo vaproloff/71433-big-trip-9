@@ -7,18 +7,6 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-};
-
-const toJSON = (response) => {
-  return response.json();
-};
-
 class API {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
@@ -27,44 +15,44 @@ class API {
 
   getDestinations() {
     return this._load({url: `destinations`})
-      .then(toJSON);
+      .then(this._convertToJSON);
   }
 
   getOffers() {
     return this._load({url: `offers`})
-      .then(toJSON);
+      .then(this._convertToJSON);
   }
 
   getEvents() {
     return this._load({url: `points`})
-      .then(toJSON)
+      .then(this._convertToJSON)
       .then(EventAdapter.parseEvents);
   }
 
-  createEvent(data) {
+  createEvent(eventData) {
     return this._load({
       url: `points`,
       method: Method.POST,
-      body: JSON.stringify(data),
+      body: JSON.stringify(eventData),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON)
+      .then(this._convertToJSON)
       .then(EventAdapter.parseEvent);
   }
 
-  updateEvent(id, data) {
+  updateEvent(eventID, eventData) {
     return this._load({
-      url: `points/${id}`,
+      url: `points/${eventID}`,
       method: Method.PUT,
-      body: JSON.stringify(data),
+      body: JSON.stringify(eventData),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON)
+      .then(this._convertToJSON)
       .then(EventAdapter.parseEvent);
   }
 
-  deleteEvent(id) {
-    return this._load({url: `points/${id}`, method: Method.DELETE});
+  deleteEvent(eventID) {
+    return this._load({url: `points/${eventID}`, method: Method.DELETE});
   }
 
   syncEvents(events) {
@@ -74,17 +62,29 @@ class API {
       body: JSON.stringify(events),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON);
+      .then(this._convertToJSON);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
+      .then(this._checkStatus)
       .catch((err) => {
         throw new Error(err);
       });
+  }
+
+  _checkStatus(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    } else {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+  }
+
+  _convertToJSON(response) {
+    return response.json();
   }
 }
 

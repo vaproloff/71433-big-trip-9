@@ -8,7 +8,7 @@ class TripFilter extends AbstractComponent {
     this._filters = filters;
   }
 
-  getTemplate() {
+  _getTemplate() {
     return `
       <form class="trip-filters" action="#" method="get">
         ${this._filters.map((it) => `

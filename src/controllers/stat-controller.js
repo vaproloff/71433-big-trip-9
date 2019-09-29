@@ -49,6 +49,12 @@ class StatController {
     this._init();
   }
 
+  show() {
+    if (this._statistics.getElement().classList.contains(`visually-hidden`)) {
+      this._statistics.getElement().classList.remove(`visually-hidden`);
+    }
+  }
+
   hide() {
     if (this._statistics.getElement().classList.contains(`visually-hidden`)) {
       return;
@@ -56,10 +62,23 @@ class StatController {
     this._statistics.getElement().classList.add(`visually-hidden`);
   }
 
-  show() {
-    if (this._statistics.getElement().classList.contains(`visually-hidden`)) {
-      this._statistics.getElement().classList.remove(`visually-hidden`);
+  refreshCharts(events) {
+    this._events = events;
+    this._refreshChart(this._moneyChart, this._getMoneyData());
+    this._refreshChart(this._transportChart, this._getTransportData());
+    this._refreshChart(this._timeChart, this._getTimeData());
+  }
+
+  _refreshChart(chart, data) {
+    data.forEach((it, i) => {
+      chart.data.labels[i] = it.type;
+      chart.data.datasets[0].data[i] = it.value;
+    });
+    while (data.length < chart.data.labels.length) {
+      chart.data.labels.pop();
+      chart.data.datasets[0].data.pop();
     }
+    chart.update();
   }
 
   _init() {
@@ -80,25 +99,6 @@ class StatController {
     const timeData = this._getTimeData();
     const formatTimeLabel = (value) => getFormattedDuration(value);
     this._timeChart = new Chart(timeCtx, this._getChartConfig(`TIME SPENT`, timeData, formatTimeLabel));
-  }
-
-  _refreshChart(chart, data) {
-    data.forEach((it, i) => {
-      chart.data.labels[i] = it.type;
-      chart.data.datasets[0].data[i] = it.value;
-    });
-    while (data.length < chart.data.labels.length) {
-      chart.data.labels.pop();
-      chart.data.datasets[0].data.pop();
-    }
-    chart.update();
-  }
-
-  refreshCharts(events) {
-    this._events = events;
-    this._refreshChart(this._moneyChart, this._getMoneyData());
-    this._refreshChart(this._transportChart, this._getTransportData());
-    this._refreshChart(this._timeChart, this._getTimeData());
   }
 
   _getMoneyData() {

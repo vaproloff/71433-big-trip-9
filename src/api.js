@@ -65,16 +65,6 @@ class API {
       .then(this._convertToJSON);
   }
 
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(this._checkStatus)
-      .catch((err) => {
-        throw new Error(err);
-      });
-  }
-
   _checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
       return response;
@@ -85,6 +75,16 @@ class API {
 
   _convertToJSON(response) {
     return response.json();
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(this._checkStatus)
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 }
 

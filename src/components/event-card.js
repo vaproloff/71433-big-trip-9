@@ -15,7 +15,7 @@ class EventCard extends AbstractComponent {
     this._offers = event.offers;
   }
 
-  getTemplate() {
+  _getTemplate() {
     return `
       <li class="trip-events__item">
         <div class="event">

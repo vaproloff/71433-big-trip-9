@@ -17,14 +17,6 @@ class EventAdapter {
     this.isFavorite = Boolean(data[`is_favorite`]);
   }
 
-  static parseEvent(data) {
-    return new EventAdapter(data);
-  }
-
-  static parseEvents(data) {
-    return data.map(EventAdapter.parseEvent);
-  }
-
   toRAW() {
     return {
       'id': this.id,
@@ -40,6 +32,14 @@ class EventAdapter {
       'base_price': this.price,
       'is_favorite': this.isFavorite
     };
+  }
+
+  static parseEvent(data) {
+    return new EventAdapter(data);
+  }
+
+  static parseEvents(data) {
+    return data.map(EventAdapter.parseEvent);
   }
 }
 

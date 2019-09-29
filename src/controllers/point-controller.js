@@ -22,6 +22,17 @@ class PointController {
     this._addFlatpickrs();
   }
 
+  setDefaultView() {
+    if (this._eventCardList.contains(this._eventCardEdit.getElement())) {
+      this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
+    }
+  }
+
+  clearFlatpickr() {
+    this._startFlatpickr.destroy();
+    this._endFlatpickr.destroy();
+  }
+
   _init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -125,17 +136,6 @@ class PointController {
       defaultDate: this._eventData.timeStart + this._eventData.duration,
       minDate: this._eventData.timeStart
     });
-  }
-
-  setDefaultView() {
-    if (this._eventCardList.contains(this._eventCardEdit.getElement())) {
-      this._eventCardList.replaceChild(this._eventCard.getElement(), this._eventCardEdit.getElement());
-    }
-  }
-
-  clearFlatpickr() {
-    this._startFlatpickr.destroy();
-    this._endFlatpickr.destroy();
   }
 }
 

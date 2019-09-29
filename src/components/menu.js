@@ -8,7 +8,7 @@ class Menu extends AbstractComponent {
     this._menus = menus;
   }
 
-  getTemplate() {
+  _getTemplate() {
     return `
       <nav class="trip-controls__trip-tabs  trip-tabs">
         ${this._menus.map((it) => `

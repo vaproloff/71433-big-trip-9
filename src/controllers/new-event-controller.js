@@ -20,12 +20,23 @@ class NewEventController {
     this._addFlatpickrs();
   }
 
+  clearFlatpickr() {
+    this._startFlatpickr.destroy();
+    this._endFlatpickr.destroy();
+  }
+
+  cancelTaskAdding() {
+    this.clearFlatpickr();
+    this._eventNewCard.removeElement();
+    this._onDataChange(null, null);
+  }
+
   _init() {
     this._onCreateNewTask();
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        this.onNewTaskReset();
+        this.cancelTaskAdding();
       }
     };
 
@@ -85,7 +96,7 @@ class NewEventController {
     this._eventNewCard.getElement().querySelector(`input[name="event-start-time"]`).addEventListener(`change`, onStartDateChange);
     this._eventNewCard.getElement().addEventListener(`submit`, onNewTaskSubmit);
     this._eventNewCard.getElement().addEventListener(`reset`, () => {
-      this.onNewTaskReset();
+      this.cancelTaskAdding();
       document.removeEventListener(`keydown`, onEscKeyDown);
     });
     document.addEventListener(`keydown`, onEscKeyDown);
@@ -117,17 +128,6 @@ class NewEventController {
       defaultDate: this._newEventData.timeStart + this._newEventData.duration,
       minDate: this._newEventData.timeStart
     });
-  }
-
-  onNewTaskReset() {
-    this.clearFlatpickr();
-    this._eventNewCard.removeElement();
-    this._onDataChange(null, null);
-  }
-
-  clearFlatpickr() {
-    this._startFlatpickr.destroy();
-    this._endFlatpickr.destroy();
   }
 }
 

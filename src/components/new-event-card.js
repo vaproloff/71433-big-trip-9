@@ -8,6 +8,18 @@ class EventNewCard extends EventCard {
     super(eventData);
   }
 
+  block() {
+    this._element.querySelectorAll(`input, button`)
+      .forEach((it) => it.setAttribute(`disabled`, `disabled`));
+    this._element.querySelector(`.event__save-btn`).textContent = `Saving...`;
+  }
+
+  unblock() {
+    this._element.querySelectorAll(`input, button`)
+      .forEach((it) => it.removeAttribute(`disabled`));
+    this._element.querySelector(`.event__save-btn`).textContent = `Save`;
+  }
+
   shakeOnError() {
     const ANIMATION_TIMEOUT = 600;
     this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
@@ -21,19 +33,7 @@ class EventNewCard extends EventCard {
     }, ANIMATION_TIMEOUT);
   }
 
-  block() {
-    this._element.querySelectorAll(`input, button`)
-      .forEach((it) => it.setAttribute(`disabled`, `disabled`));
-    this._element.querySelector(`.event__save-btn`).textContent = `Saving...`;
-  }
-
-  unblock() {
-    this._element.querySelectorAll(`input, button`)
-      .forEach((it) => it.removeAttribute(`disabled`));
-    this._element.querySelector(`.event__save-btn`).textContent = `Save`;
-  }
-
-  getTemplate() {
+  _getTemplate() {
     return `
       <form class="trip-events__item  event  event--edit" action="#" method="post">
         <header class="event__header">

@@ -10,6 +10,27 @@ class TripInfo extends AbstractComponent {
     this._route = null;
   }
 
+  refreshInfo(startDate, finishDate, route) {
+    this.removeElement();
+    if (startDate) {
+      this._startDate = startDate;
+      this._finishDate = finishDate;
+      this._route = route;
+      const infoSection = document.querySelector(`section.trip-main__trip-info`);
+      renderElement(infoSection, Position.AFTERBEGIN, this.getElement());
+    }
+  }
+
+  _getTemplate() {
+    return `
+      <div class="trip-info__main">
+        <h1 class="trip-info__title">${this._route}</h1>
+    
+        <p class="trip-info__dates">${TripInfo.getTripDatesString(this._startDate, this._finishDate)}</p>
+      </div>
+    `;
+  }
+
   static getTripDatesString(firstDate, lastDate) {
     const start = moment(firstDate).format(`MMM D`);
     const startMonth = new Date(firstDate).getMonth();
@@ -24,27 +45,6 @@ class TripInfo extends AbstractComponent {
       finish = moment(lastDate).format(`D`);
     }
     return `${start}${finish ? `&nbsp;&mdash;&nbsp;${finish}` : ``}`;
-  }
-
-  refreshInfo(startDate, finishDate, route) {
-    this.removeElement();
-    if (startDate) {
-      this._startDate = startDate;
-      this._finishDate = finishDate;
-      this._route = route;
-      const infoSection = document.querySelector(`section.trip-main__trip-info`);
-      renderElement(infoSection, Position.AFTERBEGIN, this.getElement());
-    }
-  }
-
-  getTemplate() {
-    return `
-      <div class="trip-info__main">
-        <h1 class="trip-info__title">${this._route}</h1>
-    
-        <p class="trip-info__dates">${TripInfo.getTripDatesString(this._startDate, this._finishDate)}</p>
-      </div>
-    `;
   }
 }
 

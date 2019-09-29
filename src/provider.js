@@ -96,13 +96,13 @@ class Provider {
     }
   }
 
-  _isOnline() {
-    return window.navigator.onLine;
-  }
-
   syncEvents() {
     const events = this._store.getItems(STORE.events);
     return this._api.syncEvents(Object.values(events));
+  }
+
+  _isOnline() {
+    return window.navigator.onLine;
   }
 
   _generateId() {

@@ -5,7 +5,7 @@ class Statistics extends AbstractComponent {
     super();
   }
 
-  getTemplate() {
+  _getTemplate() {
     return `
       <section class="statistics">
         <h2 class="visually-hidden">Trip statistics</h2>

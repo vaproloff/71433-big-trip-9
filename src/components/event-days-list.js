@@ -11,7 +11,7 @@ class EventDaysList extends AbstractComponent {
     this._days = [...new Set(events.map((it) => new Date(it.timeStart).setHours(0, 0, 0, 0)))];
   }
 
-  getTemplate() {
+  _getTemplate() {
     return `
       <ul class="trip-days">
         ${this._days ? this._days.map((it, index) => `
